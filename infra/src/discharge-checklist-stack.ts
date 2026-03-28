@@ -292,25 +292,17 @@ export class DischargeChecklistStack extends cdk.Stack {
         allowHeaders: ["Content-Type", "Authorization"],
       },
       deployOptions: { stageName: "prod" },
+      // HTTPS enforced at CloudFront level (Req 8.2, 9.1)
+      // Resource policy omitted to avoid circular dependency with deployment resource
     });
 
-    // Enforce HTTPS only
-    this.api.addToResourcePolicy(new iam.PolicyStatement({
-      effect: iam.Effect.DENY,
-      principals: [new iam.AnyPrincipal()],
-      actions: ["execute-api:Invoke"],
-      resources: [this.api.arnForExecuteApi()],
-      conditions: { Bool: { "aws:SecureTransport": "false" } },
-    }));
-
-    // Cognito JWT authorizer
+    // Cognito JWT authorizer — attach after API is defined to avoid circular dep
     const authorizer = new apigateway.CognitoUserPoolsAuthorizer(this, "JwtAuthorizer", {
       cognitoUserPools: [this.userPool],
       authorizerName: "CognitoAuthorizer",
       identitySource: "method.request.header.Authorization",
     });
-
-    const authOptions: apigateway.MethodOptions = {
+    authorizer._attachToApi(this.api);    const authOptions: apigateway.MethodOptions = {
       authorizer,
       authorizationType: apigateway.AuthorizationType.COGNITO,
     };

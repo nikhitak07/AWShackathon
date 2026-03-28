@@ -325,9 +325,7 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
      "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip"
     },
     "Timeout": 900,
@@ -757,10 +755,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -787,7 +783,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/PreAuthLockoutTrigger/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -796,10 +792,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -825,7 +819,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/PostAuthLockoutTrigger/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1195,10 +1189,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -1236,7 +1228,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/UploadFn/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1245,10 +1237,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -1286,7 +1276,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ExtractFn/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1295,10 +1285,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -1336,7 +1324,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ParseFn/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1345,10 +1333,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -1386,7 +1372,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistSaveFn/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1395,10 +1381,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -1436,7 +1420,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistGetFn/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1445,10 +1429,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -1486,7 +1468,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistUpdateFn/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1495,10 +1477,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -1536,7 +1516,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistDeleteFn/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1545,10 +1525,8 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
     },
     "Environment": {
      "Variables": {
@@ -1586,7 +1564,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistListFn/Resource",
-    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1594,44 +1572,7 @@
   "DischargeChecklistApi9CB87AB9": {
    "Type": "AWS::ApiGateway::RestApi",
    "Properties": {
-    "Name": "discharge-checklist-api",
-    "Policy": {
-     "Statement": [
-      {
-       "Action": "execute-api:Invoke",
-       "Condition": {
-        "Bool": {
-         "aws:SecureTransport": "false"
-        }
-       },
-       "Effect": "Deny",
-       "Principal": {
-        "AWS": "*"
-       },
-       "Resource": {
-        "Fn::Join": [
-         "",
-         [
-          "arn:",
-          {
-           "Ref": "AWS::Partition"
-          },
-          ":execute-api:us-east-1:",
-          {
-           "Ref": "AWS::AccountId"
-          },
-          ":",
-          {
-           "Ref": "DischargeChecklistApi9CB87AB9"
-          },
-          "/*/*/*"
-         ]
-        ]
-       }
-      }
-     ],
-     "Version": "2012-10-17"
-    }
+    "Name": "discharge-checklist-api"
    },
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Resource"
@@ -1692,7 +1633,7 @@
     "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Account"
    }
   },
-  "DischargeChecklistApiDeploymentD260D90B82f9e6be5d51cc077a47f6c7aef9afc2": {
+  "DischargeChecklistApiDeploymentD260D90Bda39e0f08b525fef50048cdde45bd110": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "Automatically created by the RestApi construct",
@@ -1730,7 +1671,7 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "DischargeChecklistApiDeploymentD260D90B82f9e6be5d51cc077a47f6c7aef9afc2"
+     "Ref": "DischargeChecklistApiDeploymentD260D90Bda39e0f08b525fef50048cdde45bd110"
     },
     "RestApiId": {
      "Ref": "DischargeChecklistApi9CB87AB9"
@@ -1870,11 +1811,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -1910,11 +1847,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2049,11 +1982,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2089,11 +2018,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2228,11 +2153,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2268,11 +2189,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2407,11 +2324,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2447,11 +2360,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2525,11 +2434,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2565,11 +2470,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2701,11 +2602,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2741,11 +2638,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2819,11 +2712,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2859,11 +2748,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2937,11 +2822,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },
@@ -2977,11 +2858,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
+       ":execute-api:us-east-1:797715838679:",
        {
         "Ref": "DischargeChecklistApi9CB87AB9"
        },

@@ -362,7 +362,7 @@
   "/DischargeChecklistStack/DischargeChecklistApi/Deployment/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "DischargeChecklistApiDeploymentD260D90B82f9e6be5d51cc077a47f6c7aef9afc2"
+      "data": "DischargeChecklistApiDeploymentD260D90Bda39e0f08b525fef50048cdde45bd110"
     }
   ],
   "/DischargeChecklistStack/DischargeChecklistApi/DeploymentStage.prod/Resource": [
