@@ -156,7 +156,7 @@ export class DischargeChecklistStack extends cdk.Stack {
       userPoolName: "discharge-checklist-users",
       selfSignUpEnabled: true,
       signInAliases: { username: true, email: true },
-      autoVerify: { email: true },
+      autoVerify: { email: false },
       passwordPolicy: {
         minLength: 12,
         requireUppercase: true,
