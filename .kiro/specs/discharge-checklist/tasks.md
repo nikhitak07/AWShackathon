@@ -22,7 +22,7 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - _Requirements: 7.1, 7.2, 7.4, 7.5, 7.7_
   - [skip] 2.2 Implement account lockout after 5 failed attempts within 15 minutes with email notification
     - _Requirements: 7.6_
-  - [~] 2.3 Implement session expiry redirect — expired JWT redirects user to login and invalidates token
+  - [ ] 2.3 Implement session expiry redirect — expired JWT redirects user to login and invalidates token
     - _Requirements: 7.3, 7.8_
   - [ ]* 2.4 Write unit tests for Auth_Service
     - Test generic error on bad credentials
@@ -31,13 +31,13 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - _Requirements: 7.2, 7.4, 7.6_
 
 - [ ] 3. Audit_Log — append-only DynamoDB writes
-  - [~] 3.1 Implement `writeAuditEntry(entry: AuditLogEntry): Promise<void>` that writes to the `audit_log` DynamoDB table
+  - [ ] 3.1 Implement `writeAuditEntry(entry: AuditLogEntry): Promise<void>` that writes to the `audit_log` DynamoDB table
     - IAM policy must deny `DeleteItem` and `UpdateItem` for the application role
     - Record `userId`, `eventType`, `timestamp`, `sourceIp` on every call
     - _Requirements: 8.3, 8.4_
-  - [~] 3.2 Instrument all required event types: LOGIN, LOGOUT, IMAGE_UPLOAD, CHECKLIST_GENERATED, CHECKLIST_VIEW, CHECKLIST_EDIT, CHECKLIST_DELETED, CHECKLIST_EXPORT, AI_ASSISTANT_INVOKED, UNAUTHORIZED_ACCESS_ATTEMPT
+  - [ ] 3.2 Instrument all required event types: LOGIN, LOGOUT, IMAGE_UPLOAD, CHECKLIST_GENERATED, CHECKLIST_VIEW, CHECKLIST_EDIT, CHECKLIST_DELETED, CHECKLIST_EXPORT, AI_ASSISTANT_INVOKED, UNAUTHORIZED_ACCESS_ATTEMPT
     - _Requirements: 8.3, 8.8_
-  - [~] 3.3 Implement admin export Lambda that streams `audit_log` entries to S3
+  - [ ] 3.3 Implement admin export Lambda that streams `audit_log` entries to S3
     - Disable DynamoDB TTL on `audit_log` table; entries retained ≥6 years
     - _Requirements: 8.5, 8.7_
   - [ ]* 3.4 Write unit tests for Audit_Log
@@ -45,7 +45,7 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - Test that update/delete operations are rejected by IAM policy (integration-level)
     - _Requirements: 8.3, 8.4, 8.5_
 
-- [~] 4. Checkpoint — Auth and Audit baseline
+- [ ] 4. Checkpoint — Auth and Audit baseline
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 5. Uploader — file validation and pre-signed URL
@@ -103,7 +103,7 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - Test date/time extraction from item text
     - _Requirements: 3.1, 3.2, 3.3_
 
-- [~] 8. Checkpoint — Core pipeline (Upload → Extract → Parse)
+- [ ] 8. Checkpoint — Core pipeline (Upload → Extract → Parse)
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 9. Checklist persistence — DynamoDB CRUD
@@ -121,7 +121,7 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - _Requirements: 5.1, 5.2, 5.3, 9.3_
 
 - [ ] 10. Pretty_Printer — checklist React component
-  - [~] 10.1 Implement the `PrettyPrinter` React component
+  - [ ] 10.1 Implement the `PrettyPrinter` React component
     - Render each category as a distinct section with heading and `Category_Icon` (≥24×24 px, unique color per category)
     - Assign correct icons: pill → Medications, calendar → FollowUpAppointments, warning → WarningSigns, fork-and-knife → DietaryRestrictions, activity → DailyActivities
     - Display `High` items before `Routine` items within each section
@@ -129,13 +129,13 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - Render completed items with strikethrough + muted color
     - Display date/time inline when present on an item
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 10.1, 10.2, 10.3, 10.5, 11.3, 11.4, 11.5_
-  - [~] 10.2 Implement add, edit, delete, and priority-change interactions
+  - [ ] 10.2 Implement add, edit, delete, and priority-change interactions
     - Add item: append to selected category, default priority Routine, persist via API
     - Edit item: save updated text in place, persist via API
     - Delete item: remove item and remove category section if empty, persist via API
     - Priority change: reorder items within category to reflect new priority, persist via API
     - _Requirements: 4.6, 4.7, 4.8, 4.9, 4.10, 4.11, 4.12, 11.6, 11.7, 11.8_
-  - [~] 10.3 Implement default icon display for dynamically added categories
+  - [ ] 10.3 Implement default icon display for dynamically added categories
     - _Requirements: 10.4_
   - [ ]* 10.4 Write unit tests for Pretty_Printer
     - Test High items render before Routine items in the same category
@@ -146,14 +146,14 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
 
 
 - [ ] 12. AI_Assistant — Bedrock chat
-  - [~] 12.1 Implement `askAssistant(req: AssistantRequest): Promise<AssistantResponse>` Lambda
+  - [ ] 12.1 Implement `askAssistant(req: AssistantRequest): Promise<AssistantResponse>` Lambda
     - Send question + current user checklist (no raw PHI beyond checklist) to Amazon Bedrock
     - Maintain conversation history for the active session
     - Append disclaimer to every response
     - Respond within 10 seconds under normal conditions; surface unavailability message on Bedrock error
     - Write `AI_ASSISTANT_INVOKED` audit log entry (userId, timestamp, sourceIp only — no question/response content)
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8, 12.10_
-  - [~] 12.2 Implement AI_Assistant React chat component
+  - [ ] 12.2 Implement AI_Assistant React chat component
     - Gate behind authentication check — hide/disable when user is unauthenticated
     - _Requirements: 12.9_
   - [ ]* 12.3 Write unit tests for AI_Assistant
@@ -164,20 +164,20 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - _Requirements: 12.5, 12.6, 12.8, 12.9_
 
 - [ ] 13. HIPAA compliance wiring
-  - [~] 13.1 Verify and enforce AES-256 encryption at rest for all DynamoDB tables and S3 buckets (AWS-managed KMS)
+  - [ ] 13.1 Verify and enforce AES-256 encryption at rest for all DynamoDB tables and S3 buckets (AWS-managed KMS)
     - _Requirements: 8.1_
-  - [~] 13.2 Enforce TLS 1.2+ on API Gateway and CloudFront; reject non-HTTPS requests
+  - [ ] 13.2 Enforce TLS 1.2+ on API Gateway and CloudFront; reject non-HTTPS requests
     - _Requirements: 8.2, 9.1_
-  - [~] 13.3 Implement unauthorized access detection: if a request attempts to access another user's PHI, write `UNAUTHORIZED_ACCESS_ATTEMPT` audit log entry and return 403; trigger admin alert within 1 hour
+  - [ ] 13.3 Implement unauthorized access detection: if a request attempts to access another user's PHI, write `UNAUTHORIZED_ACCESS_ATTEMPT` audit log entry and return 403; trigger admin alert within 1 hour
     - _Requirements: 8.6, 8.8_
-  - [~] 13.4 Implement account deletion flow — delete all PHI associated with the user within 30 days of deletion request
+  - [ ] 13.4 Implement account deletion flow — delete all PHI associated with the user within 30 days of deletion request
     - _Requirements: 8.9_
   - [ ]* 13.5 Write integration tests for HIPAA controls
     - Test cross-user PHI access returns 403 and writes audit entry
     - Test uploaded images are absent from temp bucket after 24 hours (lifecycle rule)
     - _Requirements: 8.6, 8.8, 9.2, 9.3_
 
-- [~] 14. Final checkpoint — full integration
+- [ ] 14. Final checkpoint — full integration
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
