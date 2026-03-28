@@ -1,21 +1,21 @@
-# Implementation Plan: Discharge Checklist
+# Implementation Plan: Discharge Checklist (MVP)
 
 ## Overview
 
-Implement a HIPAA-compliant, serverless discharge checklist application using React (TypeScript) on the frontend and AWS Lambda (TypeScript) on the backend. Tasks are ordered: infrastructure/IaC → auth → backend Lambda functions → frontend components → integration and testing.
+Core foundational implementation covering infrastructure, auth, image upload, AI processing, and checklist display/persistence. Advanced features (PDF export, shareable URLs, AI chat, audit admin export, priority highlighting, visual icons) are deferred.
 
 ## Tasks
 
-- [ ] 1. Project scaffolding and shared types
-  - Initialize a monorepo with `frontend/` (React + Vite + TypeScript) and `backend/` (Lambda functions + TypeScript) workspaces
-  - Create `shared/types.ts` defining all shared interfaces: `UploadRequest`, `UploadUrlResponse`, `ExtractionResult`, `ParsedChecklist`, `ChecklistCategory`, `ChecklistItem`, `AuditLogEntry`
-  - Add `PriorityLevel` (`'High' | 'Routine'`) and `source` fields to `ChecklistItem`
-  - Set up ESLint, Prettier, and Jest/Vitest configs for both workspaces
-  - _Requirements: 3.1, 4.1, 11.1_
+- [ ] 1. Set up project structure and AWS infrastructure
+  - Scaffold a monorepo with `frontend/` (React + Vite + TypeScript) and `backend/` (AWS CDK stack)
+  - Define CDK stacks for: S3 upload bucket (SSE-KMS, 24h lifecycle), DynamoDB `discharge-checklists` table (SSE-KMS, TTL attribute), Cognito User Pool (password policy, MFA TOTP), API Gateway REST API, CloudWatch log group `/discharge-checklist/audit` (2192-day retention), KMS customer-managed key
+  - Wire IAM roles and resource policies (deny non-HTTPS on S3, least-privilege Lambda execution roles)
+  - _Requirements: 7.1, 8.1, 8.2, 8.5, 9.1_
 
-- [ ] 2. AWS infrastructure (IaC)
-  - [ ] 2.1 Define S3 buckets with SSE-KMS, lifecycle rules, and HTTPS-only bucket policies
-    - `discharge-uploads-{accountId}`: 24-hour lifecycle delete rule
+- [ ] 2. Implement authentication
+  - [ ] 2.1 Configure Cognito User Pool in CDK with password policy (12 chars, upper/lower/digit/special), TOTP MFA enforced, 8-hour access token expiry, account lockout Lambda trigger (5 failures / 15 min → lock + email)
+    - _Requirements: 7.2, 7.3, 7.5, 7.6, 7.7_
+  - [ ] 2.2 arge-uploads-{accountId}`: 24-hour lifecycle delete rule
     - `discharge-checklists-export-{accountId}`: 7-day lifecycle delete rule
     - _Requirements: 8.1, 9.1, 9.2_
   - [ ] 2.2 Define DynamoDB `discharge-checklists` table
