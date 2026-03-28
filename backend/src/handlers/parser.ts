@@ -160,6 +160,8 @@ const MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0";
 
 const SYSTEM_PROMPT = `You are a medical discharge document parser. Your job is to extract EVERY actionable patient care instruction from hospital discharge paperwork. It is critical that you do not miss anything.
 
+Today's date is ${new Date().toISOString().slice(0, 10)}.
+
 MEDICATIONS — extract ALL of them, every single one:
 - Each medication MUST be its own separate checklist item — never combine multiple drugs into one item
 - Include every drug mentioned, even if it appears in a list or table
@@ -171,7 +173,8 @@ MEDICATIONS — extract ALL of them, every single one:
 FOLLOW-UP APPOINTMENTS — extract ALL of them:
 - Doctor visits, specialist referrals, lab work, blood tests, imaging (X-ray, MRI, ultrasound)
 - Include the provider name/specialty and timeframe if mentioned
-- Example: "Follow up with Dr. Smith (cardiologist) in 2 weeks"
+- IMPORTANT: Convert ALL relative timeframes to actual calendar dates. If the document says "in 2 weeks", calculate the actual date from today and use that. If it says "in 1 month", calculate the actual date. Always output a real date, never "in X weeks/days/months".
+- Example: if today is 2026-03-28 and document says "follow up in 2 weeks", output "Follow up with Dr. Smith on 2026-04-11"
 
 DIETARY RESTRICTIONS — extract ALL of them:
 - Foods and drinks to avoid or limit

@@ -9,11 +9,20 @@ type AppState = "welcome" | "login" | "upload" | "checklist";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
-function applyDailyReset(cl: Checklist): Checklist {  const today = new Date().toDateString();
+function applyDailyReset(cl: Checklist): Checklist {
+  const today = new Date().toDateString();
   const lastUpdate = new Date(cl.updatedAt).toDateString();
   if (lastUpdate === today) return cl;
+
+  // Log how many items were completed on the last active day
+  const lastDay = new Date(cl.updatedAt).toISOString().slice(0, 10);
+  const completedCount = cl.items.filter((i) => i.category !== "WarningSigns" && i.category !== "FollowUpAppointments" && i.completed).length;
+  const completionLog = { ...(cl.completionLog ?? {}) };
+  if (completedCount > 0) completionLog[lastDay] = completedCount;
+
   return {
     ...cl,
+    completionLog,
     items: cl.items.map((i) => ({ ...i, completed: false })),
     updatedAt: new Date().toISOString(),
   };

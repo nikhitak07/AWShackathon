@@ -25,6 +25,8 @@ export interface ChecklistItem {
   /** ISO 8601 date/time string, present when the item includes a date or time */
   dateTime?: string;
   completed: boolean;
+  /** For multi-dose medications: tracks which dose indices have been taken today */
+  dosesTaken?: boolean[];
 }
 
 export interface Checklist {
@@ -38,6 +40,8 @@ export interface Checklist {
   /** ISO 8601 */
   updatedAt: string;
   items: ChecklistItem[];
+  /** Map of "YYYY-MM-DD" -> number of items completed that day */
+  completionLog?: Record<string, number>;
 }
 
 // ---------------------------------------------------------------------------

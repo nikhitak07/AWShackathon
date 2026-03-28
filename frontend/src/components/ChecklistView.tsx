@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { Checklist, ChecklistItem, Category } from "@shared/types";
 import { v4 as uuidv4 } from "uuid";
 import { AsclepiusIcon } from "./Logo";
@@ -13,6 +13,44 @@ const CATEGORY_META: Record<Category, { icon: string; color: string; bg: string;
   WarningSigns:          { icon: "⚠️", color: "#ff9500", bg: "#fff5e6", darkBg: "rgba(255,149,0,0.15)", label: "Warning Signs" },
   DailyActivities:       { icon: "🏃", color: "#00c7be", bg: "#e6faf9", darkBg: "rgba(0,199,190,0.15)", label: "Daily Activities" },
 };
+
+// Parse how many times per day a medication is taken from its text
+function getDoseTimes(text: string): Date[] {
+  const lower = text.toLowerCase();
+  const now = new Date();
+  const times: Date[] = [];
+
+  const make = (h: number, m = 0) => {
+    const d = new Date(now);
+    d.setHours(h, m, 0, 0);
+    if (d <= now) d.setDate(d.getDate() + 1); // push to tomorrow if already passed
+    return d;
+  };
+
+  if (lower.includes("three times") || lower.includes("3 times") || lower.includes("thrice") || lower.includes("tid")) {
+    times.push(make(8), make(14), make(20));
+  } else if (lower.includes("twice") || lower.includes("two times") || lower.includes("2 times") || lower.includes("bid")) {
+    times.push(make(8), make(20));
+  } else if (lower.includes("four times") || lower.includes("4 times") || lower.includes("qid")) {
+    times.push(make(8), make(12), make(16), make(20));
+  } else if (lower.includes("every 8") || lower.includes("q8")) {
+    times.push(make(8), make(16), make(0));
+  } else if (lower.includes("every 6") || lower.includes("q6")) {
+    times.push(make(6), make(12), make(18), make(0));
+  } else {
+    // once daily — morning
+    times.push(make(8));
+  }
+  return times;
+}
+
+function formatCountdown(target: Date, now: Date): string {
+  const ms = target.getTime() - now.getTime();
+  if (ms <= 0) return "Now";
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
 
 const CATEGORY_ORDER: Category[] = [
   "DailyActivities", "WarningSigns", "Medications", "FollowUpAppointments", "DietaryRestrictions",
@@ -66,6 +104,34 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
   const pct = total ? Math.round((completedCount / total) * 100) : 0;
   const greeting = username ? `Hello, ${username}.` : "Hello.";
 
+  // Countdown timer
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  const msLeft = midnight.getTime() - now.getTime();
+  const hLeft = Math.floor(msLeft / 3600000);
+  const mLeft = Math.floor((msLeft % 3600000) / 60000);
+  const resetCountdown = hLeft > 0 ? `${hLeft}h ${mLeft}m` : `${mLeft}m`;
+
+  // Completion calendar
+  const startDate = new Date(checklist.createdAt);
+  startDate.setHours(0, 0, 0, 0);
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+  const calDays: Date[] = [];
+  const cur = new Date(startDate);
+  while (cur <= today) { calDays.push(new Date(cur)); cur.setDate(cur.getDate() + 1); }
+
+  // Today's completions
+  const todayKey = today.toISOString().slice(0, 10);
+  const log = { ...(checklist.completionLog ?? {}) };
+  if (completedCount > 0) log[todayKey] = completedCount;
+
   const editInputStyle: React.CSSProperties = {
     flex: 1, padding: "8px 12px", borderRadius: 8,
     border: "1.5px solid #007AFF", fontSize: 14, outline: "none",
@@ -94,7 +160,38 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
           <p style={{ margin: "0 0 2px", fontSize: 15, color: tokens.textMuted, fontWeight: 500 }}>{greeting}</p>
           <h1 style={{ margin: "0 0 20px", fontSize: 28, fontWeight: 700, color: tokens.textPrimary, letterSpacing: "-0.5px" }}>Your Discharge Checklist</h1>
 
-          {/* Warning Signs Banner */}
+          {/* Counters */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12, marginBottom: 16 }}>
+            <div style={{ background: tokens.cardBg, border: `1px solid ${tokens.border}`, borderRadius: 14, padding: "14px 16px" }}>
+              <p style={{ margin: "0 0 4px", fontSize: 12, color: tokens.textMuted, fontWeight: 500 }}>Checklist resets in</p>
+              <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#007AFF", letterSpacing: "-0.5px" }}>{resetCountdown}</p>
+            </div>
+          </div>
+
+          {/* Completion Calendar */}
+          {calDays.length > 0 && (
+            <div style={{ background: tokens.cardBg, border: `1px solid ${tokens.border}`, borderRadius: 14, padding: "14px 16px", marginBottom: 16 }}>
+              <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: tokens.textPrimary }}>Recovery Calendar</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {calDays.map((day) => {
+                  const ds = day.toISOString().slice(0, 10);
+                  const isToday = ds === todayKey;
+                  const done = (log[ds] ?? 0) > 0;
+                  return (
+                    <div key={ds} title={day.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} style={{ width: 32, height: 32, borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: done ? "#34c759" : isToday ? "rgba(0,122,255,0.12)" : isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", border: isToday ? "2px solid #007AFF" : "2px solid transparent", cursor: "default" }}>
+                      <span style={{ fontSize: 11, fontWeight: isToday ? 700 : 400, color: done ? "#fff" : isToday ? "#007AFF" : tokens.textMuted, lineHeight: 1 }}>{day.getDate()}</span>
+                      {done && <span style={{ fontSize: 7, color: "rgba(255,255,255,0.8)", lineHeight: 1 }}>✓</span>}
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ display: "flex", gap: 14, marginTop: 10, fontSize: 11, color: tokens.textMuted }}>
+                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: "#34c759", marginRight: 4 }} />Completed</span>
+                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, border: "2px solid #007AFF", marginRight: 4 }} />Today</span>
+                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", marginRight: 4 }} />Pending</span>
+              </div>
+            </div>
+          )}
           {warningSigns.length > 0 && (
             <div style={{ background: isDark ? "rgba(255,149,0,0.12)" : "#fff8ed", border: "1.5px solid rgba(255,149,0,0.4)", borderRadius: 14, padding: "14px 18px", marginBottom: 14 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
@@ -179,6 +276,38 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
                           {item.dateTime && <span style={{ fontSize: 13, color: tokens.textMuted }}> · {item.dateTime}</span>}
                         </span>
                       )}
+                      {item.category === "Medications" && !item.completed && (() => {
+                        const doses = getDoseTimes(item.text);
+                        if (doses.length <= 1) return null;
+                        // Sort doses by time ascending (soonest first)
+                        const sorted = [...doses].sort((a, b) => a.getTime() - b.getTime());
+                        const dosesTaken = item.dosesTaken ?? Array(sorted.length).fill(false);
+                        return (
+                          <div style={{ display: "flex", flexDirection: "column", gap: 5, marginTop: 6 }}>
+                            {sorted.map((t, i) => (
+                              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <button
+                                  onClick={() => {
+                                    const next = [...dosesTaken];
+                                    next[i] = !next[i];
+                                    const allDone = next.every(Boolean);
+                                    update(checklist.items.map((ci) =>
+                                      ci.id === item.id ? { ...ci, dosesTaken: next, completed: allDone } : ci
+                                    ));
+                                  }}
+                                  style={{ width: 18, height: 18, borderRadius: 5, border: dosesTaken[i] ? "none" : `2px solid ${isDark ? "rgba(255,255,255,0.3)" : "#c7c7cc"}`, background: dosesTaken[i] ? "#5856d6" : "transparent", cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}
+                                  aria-label={`Mark dose ${i + 1} as ${dosesTaken[i] ? "not taken" : "taken"}`}
+                                >
+                                  {dosesTaken[i] && <svg width="9" height="7" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                                </button>
+                                <span style={{ fontSize: 12, color: dosesTaken[i] ? tokens.textMuted : "#5856d6", fontWeight: 600, textDecoration: dosesTaken[i] ? "line-through" : "none" }}>
+                                  Dose {i + 1} · {t.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} · {formatCountdown(t, now)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })()}
                       {item.priority === "High" && (
                         <span style={{ display: "inline-block", fontSize: 11, fontWeight: 700, color: "#ff9500", background: isDark ? "rgba(255,149,0,0.15)" : "#fff5e6", border: "1px solid rgba(255,149,0,0.3)", borderRadius: 6, padding: "2px 7px", width: "fit-content" }}>High Priority</span>
                       )}
