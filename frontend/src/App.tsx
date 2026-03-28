@@ -3,7 +3,6 @@ import { Uploader } from "./components/Uploader";
 import { ChecklistView } from "./components/ChecklistView";
 import { Login } from "./components/Login";
 import { WelcomePage } from "./components/WelcomePage";
-import { Assistant } from "./components/Assistant";
 import type { Checklist } from "@shared/types";
 
 type AppState = "welcome" | "login" | "upload" | "checklist";
@@ -15,6 +14,7 @@ const App: React.FC = () => {
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [saveError, setSaveError] = useState("");
   const [accessToken, setAccessToken] = useState("");
+  const [username, setUsername] = useState("");
 
   const authHeaders = {
     "Content-Type": "application/json",
@@ -44,13 +44,14 @@ const App: React.FC = () => {
   }
 
   if (appState === "login") {
-    return <Login onLogin={(token) => { setAccessToken(token); setAppState("upload"); }} />;
+    return <Login onLogin={(token, user) => { setAccessToken(token); setUsername(user); setAppState("upload"); }} />;
   }
 
   if (appState === "upload" || !checklist) {
     return (
       <Uploader
         accessToken={accessToken}
+        username={username}
         onChecklistReady={async (cl) => {
           setChecklist(cl);
           setAppState("checklist");
@@ -78,13 +79,14 @@ const App: React.FC = () => {
       <ChecklistView
         checklist={checklist}
         onChange={handleChecklistChange}
+        username={username}
+        accessToken={accessToken}
         onNewUpload={() => {
           setChecklist(null);
           setSaveError("");
           setAppState("upload");
         }}
       />
-      <Assistant checklist={checklist} accessToken={accessToken} />
     </>
   );
 };
