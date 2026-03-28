@@ -18,11 +18,6 @@ const client_textract_1 = require("@aws-sdk/client-textract");
 const IMAGES_BUCKET = process.env.IMAGES_BUCKET ?? "discharge-images-temp";
 const TIMEOUT_MS = 30000;
 const textract = new client_textract_1.TextractClient({});
-const CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type,Authorization",
-    "Content-Type": "application/json",
-};
 // ---------------------------------------------------------------------------
 // Custom error
 // ---------------------------------------------------------------------------
@@ -88,25 +83,31 @@ const extractHandler = async (event) => {
         body = JSON.parse(event.body ?? "{}");
     }
     catch {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
     }
     if (!body.uploadId || !body.userId) {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "uploadId and userId are required." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "uploadId and userId are required." }) };
     }
     // Derive content type from query string or body if provided
     const contentType = event.queryStringParameters?.contentType ??
         body.contentType;
     try {
         const result = await extractText(body, contentType);
+        // rawText is returned to the caller (Parser) but never written to persistent storage
         return {
             statusCode: 200,
-            headers: CORS_HEADERS,
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(result),
         };
     }
     catch (err) {
-        const message = err instanceof ExtractionError ? err.message : "An unexpected error occurred during extraction.";
-        return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ error: message }) };
+        const message = err instanceof ExtractionError
+            ? err.message
+            : "An unexpected error occurred during extraction.";
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: message }),
+        };
     }
 };
 exports.extractHandler = extractHandler;

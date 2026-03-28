@@ -43,7 +43,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "" }
       // Step 1: get a pre-signed upload URL
       const uploadRes = await fetch(`${API_BASE}/upload-url`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": accessToken },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}` },
         body: JSON.stringify({ fileName: file.name, contentType: file.type }),
       });
       if (!uploadRes.ok) throw new Error("Failed to get upload URL.");
@@ -60,7 +60,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "" }
       // Step 3: call the Extractor Lambda
       const extractRes = await fetch(`${API_BASE}/extract`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": accessToken },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}` },
         body: JSON.stringify({ uploadId, contentType: file.type }),
       });
       if (!extractRes.ok) {
@@ -72,7 +72,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "" }
       // Step 4: call the Parser Lambda
       const parseRes = await fetch(`${API_BASE}/parse`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": accessToken },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}` },
         body: JSON.stringify({ rawText }),
       });
       if (!parseRes.ok) {

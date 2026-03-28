@@ -16,7 +16,7 @@ const App: React.FC = () => {
 
   const authHeaders = {
     "Content-Type": "application/json",
-    "Authorization": accessToken,
+    "Authorization": `Bearer ${accessToken}`,
   };
 
   const handleChecklistChange = useCallback(async (cl: Checklist) => {

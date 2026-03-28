@@ -11,13 +11,8 @@ exports.getUploadUrl = getUploadUrl;
 const client_s3_1 = require("@aws-sdk/client-s3");
 const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const uuid_1 = require("uuid");
-const CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type,Authorization",
-    "Content-Type": "application/json",
-};
 const IMAGES_BUCKET = process.env.IMAGES_BUCKET ?? "discharge-images-temp";
-const PRESIGNED_URL_EXPIRES_IN = 300;
+const PRESIGNED_URL_EXPIRES_IN = 300; // 5 minutes to complete the PUT
 const s3 = new client_s3_1.S3Client({});
 // ---------------------------------------------------------------------------
 // Constants
@@ -77,27 +72,38 @@ const uploadHandler = async (event) => {
         body = JSON.parse(event.body ?? "{}");
     }
     catch {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
     }
     const { fileName, contentType, fileSizeBytes } = body;
     if (!fileName || !contentType) {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "fileName and contentType are required." }) };
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: "fileName and contentType are required." }),
+        };
     }
     try {
+        // Validate MIME type; size validation only when provided by the client
         validateFile(contentType, fileSizeBytes ?? 0);
     }
     catch (err) {
         if (err instanceof UploadValidationError) {
-            return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: err.message }) };
+            return { statusCode: 400, body: JSON.stringify({ error: err.message }) };
         }
         throw err;
     }
     try {
         const result = await getUploadUrl({ fileName, contentType, fileSizeBytes });
-        return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(result) };
+        return {
+            statusCode: 200,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(result),
+        };
     }
     catch {
-        return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ error: "Failed to generate upload URL. Please try again." }) };
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: "Failed to generate upload URL. Please try again." }),
+        };
     }
 };
 exports.uploadHandler = uploadHandler;

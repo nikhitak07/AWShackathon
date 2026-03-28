@@ -134,28 +134,30 @@ export function parseChecklist(json: string): Checklist {
 
 import type { APIGatewayProxyHandler } from "aws-lambda";
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type,Authorization",
+  "Content-Type": "application/json",
+};
+
 export const parseHandler: APIGatewayProxyHandler = async (event) => {
   let body: { rawText?: string; userId?: string };
   try {
     body = JSON.parse(event.body ?? "{}");
   } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
   }
 
   const { rawText, userId } = body;
   if (!rawText || !userId) {
-    return { statusCode: 400, body: JSON.stringify({ error: "rawText and userId are required." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "rawText and userId are required." }) };
   }
 
   try {
     const checklist = parseText(rawText, userId);
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(checklist),
-    };
+    return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(checklist) };
   } catch (err) {
     const message = err instanceof ParseError ? err.message : "Failed to generate checklist.";
-    return { statusCode: 422, body: JSON.stringify({ error: message }) };
+    return { statusCode: 422, headers: CORS_HEADERS, body: JSON.stringify({ error: message }) };
   }
 };

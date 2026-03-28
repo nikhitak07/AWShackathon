@@ -362,13 +362,37 @@
   "/DischargeChecklistStack/DischargeChecklistApi/Deployment/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "DischargeChecklistApiDeploymentD260D90Bda39e0f08b525fef50048cdde45bd110"
+      "data": "DischargeChecklistApiDeploymentD260D90B163477d22d60d9c9d848ae8e1bd9d22e"
     }
   ],
   "/DischargeChecklistStack/DischargeChecklistApi/DeploymentStage.prod/Resource": [
     {
       "type": "aws:cdk:logicalId",
       "data": "DischargeChecklistApiDeploymentStageprod53A1C566"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/GatewayResponseUNAUTHORIZED/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiGatewayResponseUNAUTHORIZED6618EDDC"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/GatewayResponseACCESS_DENIED/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiGatewayResponseACCESSDENIEDF99CCBB6"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/GatewayResponseDEFAULT_4XX/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiGatewayResponseDEFAULT4XXDEB0D97F"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/GatewayResponseDEFAULT_5XX/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiGatewayResponseDEFAULT5XX4175DA27"
     }
   ],
   "/DischargeChecklistStack/DischargeChecklistApi/Default/OPTIONS/Resource": [

@@ -756,7 +756,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -783,7 +783,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/PreAuthLockoutTrigger/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -793,7 +793,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -819,7 +819,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/PostAuthLockoutTrigger/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1187,7 +1187,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -1225,7 +1225,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/UploadFn/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1235,7 +1235,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -1273,7 +1273,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ExtractFn/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1283,7 +1283,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -1321,7 +1321,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ParseFn/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1331,7 +1331,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -1369,7 +1369,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistSaveFn/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1379,7 +1379,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -1417,7 +1417,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistGetFn/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1427,7 +1427,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -1465,7 +1465,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistUpdateFn/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1475,7 +1475,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -1513,7 +1513,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistDeleteFn/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1523,7 +1523,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec.zip"
+     "S3Key": "cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440.zip"
     },
     "Environment": {
      "Variables": {
@@ -1561,7 +1561,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/ChecklistListFn/Resource",
-    "aws:asset:path": "asset.088b159709bd188d074cbf053ec4be64813b4468852f5675f613e00a8eec7aec",
+    "aws:asset:path": "asset.cd77ff9f4ef6bc3a197d5f99f6ab546d41d850349c5750cc52ad77091bd21440",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1630,7 +1630,7 @@
     "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Account"
    }
   },
-  "DischargeChecklistApiDeploymentD260D90Bda39e0f08b525fef50048cdde45bd110": {
+  "DischargeChecklistApiDeploymentD260D90B163477d22d60d9c9d848ae8e1bd9d22e": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "Automatically created by the RestApi construct",
@@ -1657,7 +1657,11 @@
     "DischargeChecklistApiparse0DB7761A",
     "DischargeChecklistApiuploadurlOPTIONS7796B8BE",
     "DischargeChecklistApiuploadurlPOSTEE19A1F1",
-    "DischargeChecklistApiuploadurlC0AE63EF"
+    "DischargeChecklistApiuploadurlC0AE63EF",
+    "DischargeChecklistApiGatewayResponseACCESSDENIEDF99CCBB6",
+    "DischargeChecklistApiGatewayResponseDEFAULT4XXDEB0D97F",
+    "DischargeChecklistApiGatewayResponseDEFAULT5XX4175DA27",
+    "DischargeChecklistApiGatewayResponseUNAUTHORIZED6618EDDC"
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Deployment/Resource",
@@ -1668,7 +1672,7 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "DischargeChecklistApiDeploymentD260D90Bda39e0f08b525fef50048cdde45bd110"
+     "Ref": "DischargeChecklistApiDeploymentD260D90B163477d22d60d9c9d848ae8e1bd9d22e"
     },
     "RestApiId": {
      "Ref": "DischargeChecklistApi9CB87AB9"
@@ -2910,6 +2914,70 @@
     "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/DELETE/Resource"
    }
   },
+  "DischargeChecklistApiGatewayResponseUNAUTHORIZED6618EDDC": {
+   "Type": "AWS::ApiGateway::GatewayResponse",
+   "Properties": {
+    "ResponseParameters": {
+     "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'"
+    },
+    "ResponseType": "UNAUTHORIZED",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/GatewayResponseUNAUTHORIZED/Resource"
+   }
+  },
+  "DischargeChecklistApiGatewayResponseACCESSDENIEDF99CCBB6": {
+   "Type": "AWS::ApiGateway::GatewayResponse",
+   "Properties": {
+    "ResponseParameters": {
+     "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'"
+    },
+    "ResponseType": "ACCESS_DENIED",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/GatewayResponseACCESS_DENIED/Resource"
+   }
+  },
+  "DischargeChecklistApiGatewayResponseDEFAULT4XXDEB0D97F": {
+   "Type": "AWS::ApiGateway::GatewayResponse",
+   "Properties": {
+    "ResponseParameters": {
+     "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'"
+    },
+    "ResponseType": "DEFAULT_4XX",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/GatewayResponseDEFAULT_4XX/Resource"
+   }
+  },
+  "DischargeChecklistApiGatewayResponseDEFAULT5XX4175DA27": {
+   "Type": "AWS::ApiGateway::GatewayResponse",
+   "Properties": {
+    "ResponseParameters": {
+     "gatewayresponse.header.Access-Control-Allow-Origin": "'*'",
+     "gatewayresponse.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'"
+    },
+    "ResponseType": "DEFAULT_5XX",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/GatewayResponseDEFAULT_5XX/Resource"
+   }
+  },
   "JwtAuthorizer08CECD9F": {
    "Type": "AWS::ApiGateway::Authorizer",
    "Properties": {
@@ -3000,7 +3068,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/6VSwW4aMRD9lnA2bgP00huBVuohCoL2VFWR155sBnY9yDMOpdb+e7U2hEVtD1FP82aen/1mPBM9mX3Q72/MgcfW7cYNVjptxNidMgd+TO7oTUuu0umrqRpQiyefQafQtDrdG29qcCtq0B578rqwpiLJ8XKooE7xVKe7aHcgfbWg72nU4k/0o4+joafeDE91pliXo/MotIQGBB6qLVjhUaf+S/1DFeridJi/wVkRbMQItODfaOxP8dnXnWHoFAPr9Kk12Hxx4AUlO70qdKoxbeWMTp+jt4Lk+yNDvILQIjOS77/h0TCDsJ73QVmqPQrp9I0hrIiaXvCKz2DRIHgZUqXSKbPH2ggczFGnNbDM95iX4ALn1lL0opawb+jYnu4ZZBsxdd6cAtbAFIOFfgDqHuSZXF62gs7s6ZETLk2cvfE8yjMF/AUhG3jNOmUbiu4pkBedlsgSsIp5TJvpQ8Aae7fAvCAvocziH+WhuOsGtiILtX93eUWtAr2gg5DbzH/Rt4++zo9G2UfplCcHesvvXiYzfTvTtzdbRhyH6AVb0OsSfwObL8yQ1wMAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/6VSwW7bMAz9luasaGuSXXZzk23YoWiQbKdhKGSZdZnYoiFSzTLB/z5YahoH3Q7FTnx8T5QeKc70bPFBv78yB57aaj9tsNRxK8bulTnwfayOzrRUlTp+M2UDavngEugVmlbHW+NMDdWaGrTHQbwkNpRLUjwfyqhXPNfxJtg9yMBm9CNOWvyFbvJxMvY0mOG5ThLrfLQIQitoQOCu3IEVnvTqv6p/qiydnY7zNzjLBVsxAi24Nxp7XXzydWMYesXAOn5qDTZfK3CCkpxeEL1qTFtWRsfPwVlBcsORMV6Db5EZyQ3fcG+YQVgXQ1CWaodCOn5n8GuiZih4wSewbBCcjKXM9Mp0WBuBgznquAGWosO0BGdYWEvBiVpB19Cxfb5nlG3F1GlzMtgAU/AWhgGoW5BHqtKyZXRSnx/J+Et2sAHuyHHSXlG5z5N9LoI8ksff4JPHl6xXtqFQPXhyouMKWTyWIU1yO7/zWOPQEDAvyYnP4/oHPS7u+5HzwELtXxu5lNaenrACnyaRvmuYELo6PRqkC9IrRxXoHb97mi309UJfX+0YceqDE2xBb3L8A4ElGbT6AwAA"
    },
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/CDKMetadata/Default"

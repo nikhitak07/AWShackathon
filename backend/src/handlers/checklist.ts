@@ -28,6 +28,12 @@ const TTL_DAYS = 30;
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type,Authorization",
+  "Content-Type": "application/json",
+};
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -56,6 +62,7 @@ function forbiddenIfMismatch(requestingUserId: string | null, targetUserId: stri
   if (!requestingUserId || requestingUserId !== targetUserId) {
     return {
       statusCode: 403,
+      headers: CORS_HEADERS,
       body: JSON.stringify({ error: "Access denied." }),
     };
   }
@@ -89,7 +96,7 @@ export const saveHandler: APIGatewayProxyHandler = async (event) => {
   try {
     body = JSON.parse(event.body ?? "{}") as Checklist;
   } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
   }
 
   const denied = forbiddenIfMismatch(requestingUserId, body.userId);
@@ -97,9 +104,9 @@ export const saveHandler: APIGatewayProxyHandler = async (event) => {
 
   try {
     await saveChecklist(body);
-    return { statusCode: 200, body: JSON.stringify({ success: true }) };
+    return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({ success: true }) };
   } catch {
-    return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+    return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
   }
 };
 
@@ -127,7 +134,7 @@ export const getHandler: APIGatewayProxyHandler = async (event) => {
   const targetUserId = event.queryStringParameters?.userId;
 
   if (!checklistId || !targetUserId) {
-    return { statusCode: 400, body: JSON.stringify({ error: "checklistId and userId are required." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "checklistId and userId are required." }) };
   }
 
   const denied = forbiddenIfMismatch(requestingUserId, targetUserId);
@@ -136,11 +143,11 @@ export const getHandler: APIGatewayProxyHandler = async (event) => {
   try {
     const checklist = await getChecklist(targetUserId, checklistId);
     if (!checklist) {
-      return { statusCode: 404, body: JSON.stringify({ error: "Checklist not found." }) };
+      return { statusCode: 404, headers: CORS_HEADERS, body: JSON.stringify({ error: "Checklist not found." }) };
     }
-    return { statusCode: 200, body: JSON.stringify(checklist) };
+    return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(checklist) };
   } catch {
-    return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+    return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
   }
 };
 
@@ -170,7 +177,7 @@ export const updateHandler: APIGatewayProxyHandler = async (event) => {
   try {
     body = JSON.parse(event.body ?? "{}") as Checklist;
   } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
   }
 
   const denied = forbiddenIfMismatch(requestingUserId, body.userId);
@@ -178,9 +185,9 @@ export const updateHandler: APIGatewayProxyHandler = async (event) => {
 
   try {
     await updateChecklist(body);
-    return { statusCode: 200, body: JSON.stringify({ success: true }) };
+    return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({ success: true }) };
   } catch {
-    return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+    return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
   }
 };
 
@@ -204,7 +211,7 @@ export const deleteHandler: APIGatewayProxyHandler = async (event) => {
   const targetUserId = event.queryStringParameters?.userId;
 
   if (!checklistId || !targetUserId) {
-    return { statusCode: 400, body: JSON.stringify({ error: "checklistId and userId are required." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "checklistId and userId are required." }) };
   }
 
   const denied = forbiddenIfMismatch(requestingUserId, targetUserId);
@@ -212,9 +219,9 @@ export const deleteHandler: APIGatewayProxyHandler = async (event) => {
 
   try {
     await deleteChecklist(targetUserId, checklistId);
-    return { statusCode: 200, body: JSON.stringify({ success: true }) };
+    return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({ success: true }) };
   } catch {
-    return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+    return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
   }
 };
 
@@ -242,7 +249,7 @@ export const listHandler: APIGatewayProxyHandler = async (event) => {
   const targetUserId = event.queryStringParameters?.userId;
 
   if (!targetUserId) {
-    return { statusCode: 400, body: JSON.stringify({ error: "userId is required." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "userId is required." }) };
   }
 
   const denied = forbiddenIfMismatch(requestingUserId, targetUserId);
@@ -250,8 +257,8 @@ export const listHandler: APIGatewayProxyHandler = async (event) => {
 
   try {
     const checklists = await listChecklists(targetUserId);
-    return { statusCode: 200, body: JSON.stringify(checklists) };
+    return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(checklists) };
   } catch {
-    return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+    return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
   }
 };

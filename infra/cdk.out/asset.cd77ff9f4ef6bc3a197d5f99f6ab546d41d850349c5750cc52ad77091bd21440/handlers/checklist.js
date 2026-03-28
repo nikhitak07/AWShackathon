@@ -26,11 +26,6 @@ const lib_dynamodb_1 = require("@aws-sdk/lib-dynamodb");
 const TABLE_NAME = process.env.CHECKLISTS_TABLE ?? "checklists";
 const TTL_DAYS = 30;
 const ddb = lib_dynamodb_1.DynamoDBDocumentClient.from(new client_dynamodb_1.DynamoDBClient({}));
-const CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type,Authorization",
-    "Content-Type": "application/json",
-};
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -52,7 +47,6 @@ function forbiddenIfMismatch(requestingUserId, targetUserId) {
     if (!requestingUserId || requestingUserId !== targetUserId) {
         return {
             statusCode: 403,
-            headers: CORS_HEADERS,
             body: JSON.stringify({ error: "Access denied." }),
         };
     }
@@ -82,17 +76,17 @@ const saveHandler = async (event) => {
         body = JSON.parse(event.body ?? "{}");
     }
     catch {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
     }
     const denied = forbiddenIfMismatch(requestingUserId, body.userId);
     if (denied)
         return denied;
     try {
         await saveChecklist(body);
-        return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({ success: true }) };
+        return { statusCode: 200, body: JSON.stringify({ success: true }) };
     }
     catch {
-        return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+        return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
     }
 };
 exports.saveHandler = saveHandler;
@@ -112,7 +106,7 @@ const getHandler = async (event) => {
     const checklistId = event.pathParameters?.checklistId;
     const targetUserId = event.queryStringParameters?.userId;
     if (!checklistId || !targetUserId) {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "checklistId and userId are required." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "checklistId and userId are required." }) };
     }
     const denied = forbiddenIfMismatch(requestingUserId, targetUserId);
     if (denied)
@@ -120,12 +114,12 @@ const getHandler = async (event) => {
     try {
         const checklist = await getChecklist(targetUserId, checklistId);
         if (!checklist) {
-            return { statusCode: 404, headers: CORS_HEADERS, body: JSON.stringify({ error: "Checklist not found." }) };
+            return { statusCode: 404, body: JSON.stringify({ error: "Checklist not found." }) };
         }
-        return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(checklist) };
+        return { statusCode: 200, body: JSON.stringify(checklist) };
     }
     catch {
-        return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+        return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
     }
 };
 exports.getHandler = getHandler;
@@ -152,17 +146,17 @@ const updateHandler = async (event) => {
         body = JSON.parse(event.body ?? "{}");
     }
     catch {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
     }
     const denied = forbiddenIfMismatch(requestingUserId, body.userId);
     if (denied)
         return denied;
     try {
         await updateChecklist(body);
-        return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({ success: true }) };
+        return { statusCode: 200, body: JSON.stringify({ success: true }) };
     }
     catch {
-        return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+        return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
     }
 };
 exports.updateHandler = updateHandler;
@@ -181,17 +175,17 @@ const deleteHandler = async (event) => {
     const checklistId = event.pathParameters?.checklistId;
     const targetUserId = event.queryStringParameters?.userId;
     if (!checklistId || !targetUserId) {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "checklistId and userId are required." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "checklistId and userId are required." }) };
     }
     const denied = forbiddenIfMismatch(requestingUserId, targetUserId);
     if (denied)
         return denied;
     try {
         await deleteChecklist(targetUserId, checklistId);
-        return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({ success: true }) };
+        return { statusCode: 200, body: JSON.stringify({ success: true }) };
     }
     catch {
-        return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+        return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
     }
 };
 exports.deleteHandler = deleteHandler;
@@ -214,17 +208,17 @@ const listHandler = async (event) => {
     const requestingUserId = getUserIdFromEvent(event);
     const targetUserId = event.queryStringParameters?.userId;
     if (!targetUserId) {
-        return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "userId is required." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "userId is required." }) };
     }
     const denied = forbiddenIfMismatch(requestingUserId, targetUserId);
     if (denied)
         return denied;
     try {
         const checklists = await listChecklists(targetUserId);
-        return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(checklists) };
+        return { statusCode: 200, body: JSON.stringify(checklists) };
     }
     catch {
-        return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
+        return { statusCode: 503, body: JSON.stringify({ error: "Storage unavailable. Please try again." }) };
     }
 };
 exports.listHandler = listHandler;

@@ -25,6 +25,12 @@ const TIMEOUT_MS = 30_000;
 
 const textract = new TextractClient({});
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type,Authorization",
+  "Content-Type": "application/json",
+};
+
 // ---------------------------------------------------------------------------
 // Custom error
 // ---------------------------------------------------------------------------
@@ -108,11 +114,11 @@ export const extractHandler: APIGatewayProxyHandler = async (event) => {
   try {
     body = JSON.parse(event.body ?? "{}") as ExtractionRequest;
   } catch {
-    return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
   }
 
   if (!body.uploadId || !body.userId) {
-    return { statusCode: 400, body: JSON.stringify({ error: "uploadId and userId are required." }) };
+    return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "uploadId and userId are required." }) };
   }
 
   // Derive content type from query string or body if provided
@@ -122,20 +128,13 @@ export const extractHandler: APIGatewayProxyHandler = async (event) => {
 
   try {
     const result = await extractText(body, contentType);
-    // rawText is returned to the caller (Parser) but never written to persistent storage
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: CORS_HEADERS,
       body: JSON.stringify(result),
     };
   } catch (err) {
-    const message =
-      err instanceof ExtractionError
-        ? err.message
-        : "An unexpected error occurred during extraction.";
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: message }),
-    };
+    const message = err instanceof ExtractionError ? err.message : "An unexpected error occurred during extraction.";
+    return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ error: message }) };
   }
 };

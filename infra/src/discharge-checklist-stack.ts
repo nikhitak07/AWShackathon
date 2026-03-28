@@ -291,9 +291,25 @@ export class DischargeChecklistStack extends cdk.Stack {
         allowHeaders: ["Content-Type", "Authorization"],
       },
       deployOptions: { stageName: "prod" },
-      // HTTPS enforced at CloudFront level (Req 8.2, 9.1)
-      // Resource policy omitted to avoid circular dependency with deployment resource
     });
+
+    // Add CORS headers to gateway-level error responses (401, 403, 500, etc.)
+    // so CORS errors don't mask the real error in the browser
+    const gatewayResponseTypes = [
+      apigateway.ResponseType.UNAUTHORIZED,
+      apigateway.ResponseType.ACCESS_DENIED,
+      apigateway.ResponseType.DEFAULT_4XX,
+      apigateway.ResponseType.DEFAULT_5XX,
+    ];
+    for (const responseType of gatewayResponseTypes) {
+      this.api.addGatewayResponse(`GatewayResponse${responseType.responseType}`, {
+        type: responseType,
+        responseHeaders: {
+          "Access-Control-Allow-Origin": "'*'",
+          "Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        },
+      });
+    }
 
     // Cognito JWT authorizer — attach after API is defined to avoid circular dep
     const authorizer = new apigateway.CognitoUserPoolsAuthorizer(this, "JwtAuthorizer", {
