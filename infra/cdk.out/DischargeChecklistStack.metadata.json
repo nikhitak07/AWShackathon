@@ -209,52 +209,52 @@
       "data": "ApiLambdaRole66D0B4CD"
     }
   ],
-  "/DischargeChecklistStack/UploadFn/Resource": [
+  "/DischargeChecklistStack/uploadHandler/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "UploadFnEA455C04"
+      "data": "uploadHandler55643F65"
     }
   ],
-  "/DischargeChecklistStack/ExtractFn/Resource": [
+  "/DischargeChecklistStack/extractHandler/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ExtractFnCC855AF8"
+      "data": "extractHandler3C8220D4"
     }
   ],
-  "/DischargeChecklistStack/ParseFn/Resource": [
+  "/DischargeChecklistStack/parseHandler/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ParseFn3084119B"
+      "data": "parseHandler80C6F412"
     }
   ],
-  "/DischargeChecklistStack/ChecklistSaveFn/Resource": [
+  "/DischargeChecklistStack/saveHandler/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ChecklistSaveFnE00A557C"
+      "data": "saveHandler943E60B4"
     }
   ],
-  "/DischargeChecklistStack/ChecklistGetFn/Resource": [
+  "/DischargeChecklistStack/getHandler/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ChecklistGetFnAD4946AD"
+      "data": "getHandler9DA53FA6"
     }
   ],
-  "/DischargeChecklistStack/ChecklistUpdateFn/Resource": [
+  "/DischargeChecklistStack/updateHandler/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ChecklistUpdateFn04AD52A5"
+      "data": "updateHandlerC1065636"
     }
   ],
-  "/DischargeChecklistStack/ChecklistDeleteFn/Resource": [
+  "/DischargeChecklistStack/deleteHandler/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ChecklistDeleteFn11155F54"
+      "data": "deleteHandlerD96F9D76"
     }
   ],
-  "/DischargeChecklistStack/ChecklistListFn/Resource": [
+  "/DischargeChecklistStack/listHandler/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ChecklistListFn3288B2EE"
+      "data": "listHandler721F23B2"
     }
   ],
   "/DischargeChecklistStack/DischargeChecklistApi/Resource": [
@@ -362,7 +362,7 @@
   "/DischargeChecklistStack/DischargeChecklistApi/Deployment/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "DischargeChecklistApiDeploymentD260D90B163477d22d60d9c9d848ae8e1bd9d22e"
+      "data": "DischargeChecklistApiDeploymentD260D90Bd5cca0703533366f84ab587c2fe9bb98"
     }
   ],
   "/DischargeChecklistStack/DischargeChecklistApi/DeploymentStage.prod/Resource": [

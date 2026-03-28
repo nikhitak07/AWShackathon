@@ -7,7 +7,9 @@ import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as ses from "aws-cdk-lib/aws-ses";
+import * as path from "path";
 import { Construct } from "constructs";
 
 export class DischargeChecklistStack extends cdk.Stack {
@@ -76,6 +78,14 @@ export class DischargeChecklistStack extends cdk.Stack {
       lifecycleRules: [{ id: "delete-after-24h", enabled: true, expiration: cdk.Duration.hours(24) }],
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
+      cors: [
+        {
+          allowedMethods: [s3.HttpMethods.PUT, s3.HttpMethods.GET, s3.HttpMethods.HEAD],
+          allowedOrigins: ["*"],
+          allowedHeaders: ["*"],
+          maxAge: 3000,
+        },
+      ],
     });
 
     this.exportsBucket = new s3.Bucket(this, "ExportsBucket", {
@@ -116,27 +126,27 @@ export class DischargeChecklistStack extends cdk.Stack {
       resources: ["*"],
     }));
 
-    const preAuthLambda = new lambda.Function(this, "PreAuthLockoutTrigger", {
-      functionName: "discharge-checklist-pre-auth-lockout",
+    const preAuthLambda = new lambdaNodejs.NodejsFunction(this, "PreAuthLockoutTrigger", {
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: "auth/lockoutTriggers.preAuthHandler",
-      code: lambda.Code.fromAsset("../backend/dist"),
+      entry: path.resolve(__dirname, "../../backend/src/auth/lockoutTriggers.ts"),
+      handler: "preAuthHandler",
       role: triggerRole,
       timeout: cdk.Duration.seconds(10),
       environment: {
         LOCKOUT_TABLE_NAME: this.lockoutTable.tableName,
         SES_FROM_ADDRESS: sesFromAddress,
       },
+      bundling: { externalModules: [] },
     });
 
-    const postAuthLambda = new lambda.Function(this, "PostAuthLockoutTrigger", {
-      functionName: "discharge-checklist-post-auth-lockout",
+    const postAuthLambda = new lambdaNodejs.NodejsFunction(this, "PostAuthLockoutTrigger", {
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: "auth/lockoutTriggers.postAuthHandler",
-      code: lambda.Code.fromAsset("../backend/dist"),
+      entry: path.resolve(__dirname, "../../backend/src/auth/lockoutTriggers.ts"),
+      handler: "postAuthHandler",
       role: triggerRole,
       timeout: cdk.Duration.seconds(10),
       environment: { LOCKOUT_TABLE_NAME: this.lockoutTable.tableName },
+      bundling: { externalModules: [] },
     });
 
     // -------------------------------------------------------------------------
@@ -214,71 +224,40 @@ export class DischargeChecklistStack extends cdk.Stack {
       USER_POOL_ID: this.userPool.userPoolId,
     };
 
-    const lambdaDefaults = {
+    // -------------------------------------------------------------------------
+    // Common Lambda config
+    // -------------------------------------------------------------------------
+    const backendEntry = path.resolve(__dirname, "../../backend/src");
+
+    const nodejsDefaults: Omit<lambdaNodejs.NodejsFunctionProps, "entry" | "handler"> = {
       runtime: lambda.Runtime.NODEJS_20_X,
-      code: lambda.Code.fromAsset("../backend/dist"),
       role: apiLambdaRole,
       environment: commonEnv,
+      bundling: {
+        externalModules: [], // bundle everything including node_modules
+        tsconfig: path.resolve(__dirname, "../../backend/tsconfig.json"),
+      },
     };
 
+    const fn = (entry: string, handler: string, timeout = 15) =>
+      new lambdaNodejs.NodejsFunction(this, handler.replace(/\./g, "_"), {
+        ...nodejsDefaults,
+        entry: path.join(backendEntry, entry),
+        handler,
+        timeout: cdk.Duration.seconds(timeout),
+      });
+
     // -------------------------------------------------------------------------
-    // Lambda functions — one per handler
+    // Lambda functions
     // -------------------------------------------------------------------------
-    const uploadFn = new lambda.Function(this, "UploadFn", {
-      ...lambdaDefaults,
-      functionName: "discharge-checklist-upload",
-      handler: "handlers/uploader.uploadHandler",
-      timeout: cdk.Duration.seconds(15),
-    });
-
-    const extractFn = new lambda.Function(this, "ExtractFn", {
-      ...lambdaDefaults,
-      functionName: "discharge-checklist-extract",
-      handler: "handlers/extractor.extractHandler",
-      timeout: cdk.Duration.seconds(35), // Textract can take up to 30s
-    });
-
-    const parseFn = new lambda.Function(this, "ParseFn", {
-      ...lambdaDefaults,
-      functionName: "discharge-checklist-parse",
-      handler: "handlers/parser.parseHandler",
-      timeout: cdk.Duration.seconds(15),
-    });
-
-    const checklistSaveFn = new lambda.Function(this, "ChecklistSaveFn", {
-      ...lambdaDefaults,
-      functionName: "discharge-checklist-save",
-      handler: "handlers/checklist.saveHandler",
-      timeout: cdk.Duration.seconds(10),
-    });
-
-    const checklistGetFn = new lambda.Function(this, "ChecklistGetFn", {
-      ...lambdaDefaults,
-      functionName: "discharge-checklist-get",
-      handler: "handlers/checklist.getHandler",
-      timeout: cdk.Duration.seconds(10),
-    });
-
-    const checklistUpdateFn = new lambda.Function(this, "ChecklistUpdateFn", {
-      ...lambdaDefaults,
-      functionName: "discharge-checklist-update",
-      handler: "handlers/checklist.updateHandler",
-      timeout: cdk.Duration.seconds(10),
-    });
-
-    const checklistDeleteFn = new lambda.Function(this, "ChecklistDeleteFn", {
-      ...lambdaDefaults,
-      functionName: "discharge-checklist-delete",
-      handler: "handlers/checklist.deleteHandler",
-      timeout: cdk.Duration.seconds(10),
-    });
-
-    const checklistListFn = new lambda.Function(this, "ChecklistListFn", {
-      ...lambdaDefaults,
-      functionName: "discharge-checklist-list",
-      handler: "handlers/checklist.listHandler",
-      timeout: cdk.Duration.seconds(10),
-    });
+    const uploadFn = fn("handlers/uploader.ts", "uploadHandler");
+    const extractFn = fn("handlers/extractor.ts", "extractHandler", 35);
+    const parseFn = fn("handlers/parser.ts", "parseHandler");
+    const checklistSaveFn = fn("handlers/checklist.ts", "saveHandler", 10);
+    const checklistGetFn = fn("handlers/checklist.ts", "getHandler", 10);
+    const checklistUpdateFn = fn("handlers/checklist.ts", "updateHandler", 10);
+    const checklistDeleteFn = fn("handlers/checklist.ts", "deleteHandler", 10);
+    const checklistListFn = fn("handlers/checklist.ts", "listHandler", 10);
 
     // -------------------------------------------------------------------------
     // API Gateway — REST API with Cognito authorizer

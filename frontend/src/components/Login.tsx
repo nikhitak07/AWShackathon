@@ -51,7 +51,11 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
         const assoc = await cognitoClient.send(new AssociateSoftwareTokenCommand({ Session: res.Session }));
         setSecretCode(assoc.SecretCode ?? ""); setSession(assoc.Session); setStep("mfa_setup");
       } else if (res.AuthenticationResult?.AccessToken) {
+<<<<<<< Updated upstream
         onLogin(res.AuthenticationResult.AccessToken, username);
+=======
+        onLogin(res.AuthenticationResult.IdToken ?? res.AuthenticationResult.AccessToken);
+>>>>>>> Stashed changes
       }
     } catch { setError("Invalid credentials. Please try again."); }
     finally { setLoading(false); }
@@ -66,9 +70,20 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
         Session: session,
         ChallengeResponses: { USERNAME: username, SOFTWARE_TOKEN_MFA_CODE: totp },
       }));
+<<<<<<< Updated upstream
       if (res.AuthenticationResult?.AccessToken) onLogin(res.AuthenticationResult.AccessToken, username);
     } catch { setError("Invalid MFA code. Please try again."); }
     finally { setLoading(false); }
+=======
+      if (res.AuthenticationResult?.AccessToken) {
+        onLogin(res.AuthenticationResult.IdToken ?? res.AuthenticationResult.AccessToken);
+      }
+    } catch {
+      setError("Invalid MFA code. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+>>>>>>> Stashed changes
   };
 
   const handleNewPassword = async (e: React.FormEvent) => {
@@ -83,7 +98,11 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
       if (res.ChallengeName === ChallengeNameType.SOFTWARE_TOKEN_MFA) {
         setSession(res.Session); setStep("mfa");
       } else if (res.AuthenticationResult?.AccessToken) {
+<<<<<<< Updated upstream
         onLogin(res.AuthenticationResult.AccessToken, username);
+=======
+        onLogin(res.AuthenticationResult.IdToken ?? res.AuthenticationResult.AccessToken);
+>>>>>>> Stashed changes
       }
     } catch { setError("Password change failed. Ensure it meets the requirements."); }
     finally { setLoading(false); }
@@ -100,7 +119,11 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
         ChallengeResponses: { USERNAME: username },
       }));
       if (res.AuthenticationResult?.AccessToken) {
+<<<<<<< Updated upstream
         onLogin(res.AuthenticationResult.AccessToken, username);
+=======
+        onLogin(res.AuthenticationResult.IdToken ?? res.AuthenticationResult.AccessToken);
+>>>>>>> Stashed changes
       } else if (res.ChallengeName === ChallengeNameType.SOFTWARE_TOKEN_MFA) {
         setSession(res.Session); setStep("mfa");
       }
