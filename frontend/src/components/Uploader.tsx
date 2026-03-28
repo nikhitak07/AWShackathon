@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import type { Checklist } from "@shared/types";
-import { getMockChecklist } from "../utils/parser";
 import { useTheme } from "../ThemeContext";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -74,11 +73,6 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "", 
     } finally { setLoading(false); }
   };
 
-  const useMockData = () => {
-    setLoading(true);
-    setTimeout(() => { onChecklistReady(getMockChecklist("demo-user")); setLoading(false); }, 800);
-  };
-
   return (
     <div style={{ minHeight: "100vh", background: tokens.pageBg, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column" }}>
       <div style={{ position: "absolute", top: "-10%", left: "-5%", width: 500, height: 500, background: tokens.orb1, borderRadius: "50%", animation: "float1 12s ease-in-out infinite", pointerEvents: "none" }} />
@@ -149,15 +143,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "", 
             </div>
           )}
 
-          <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "22px 0" }}>
-            <div style={{ flex: 1, height: 1, background: tokens.orLine }} />
-            <span style={{ color: tokens.textMuted, fontSize: 12 }}>or</span>
-            <div style={{ flex: 1, height: 1, background: tokens.orLine }} />
-          </div>
-
-          <button style={{ width: "100%", padding: "13px", background: tokens.btnSecondaryBg, border: `1px solid ${tokens.border}`, borderRadius: 12, fontSize: 14, fontWeight: 600, color: "#007AFF", cursor: "pointer", opacity: loading ? 0.4 : 1, fontFamily: "inherit" }} onClick={useMockData} disabled={loading}>
-            Load sample discharge data
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 22 }} />
         </div>
       </div>
 

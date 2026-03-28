@@ -56,8 +56,11 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
     setNewItemText(""); setAddingCategory(null);
   };
 
-  const completedCount = checklist.items.filter((i) => i.completed).length;
-  const total = checklist.items.length;
+  const warningSigns = checklist.items.filter((i) => i.category === "WarningSigns");
+  const checklistItems = checklist.items.filter((i) => i.category !== "WarningSigns");
+
+  const completedCount = checklistItems.filter((i) => i.completed).length;
+  const total = checklistItems.length;
   const pct = total ? Math.round((completedCount / total) * 100) : 0;
   const greeting = username ? `Hello, ${username}.` : "Hello.";
 
@@ -92,6 +95,21 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
           <p style={{ margin: "0 0 2px", fontSize: 15, color: tokens.textMuted, fontWeight: 500 }}>{greeting}</p>
           <h1 style={{ margin: "0 0 20px", fontSize: 28, fontWeight: 700, color: tokens.textPrimary, letterSpacing: "-0.5px" }}>Your Discharge Checklist</h1>
 
+          {/* Warning Signs Banner */}
+          {warningSigns.length > 0 && (
+            <div style={{ background: isDark ? "rgba(255,149,0,0.12)" : "#fff8ed", border: "1.5px solid rgba(255,149,0,0.4)", borderRadius: 14, padding: "14px 18px", marginBottom: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <span style={{ fontSize: 18 }}>⚠️</span>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "#ff9500" }}>Warning Signs — Seek immediate care if you experience:</span>
+              </div>
+              <ul style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 4 }}>
+                {warningSigns.map((item) => (
+                  <li key={item.id} style={{ fontSize: 14, color: isDark ? "#ffb340" : "#7a4500", lineHeight: 1.5 }}>{item.text}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Progress */}
           <div style={{ background: tokens.cardBg, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 16, padding: "16px 20px", marginBottom: 20, boxShadow: isDark ? "0 2px 20px rgba(0,0,0,0.3)" : "0 2px 12px rgba(0,0,0,0.06)", border: `1px solid ${tokens.border}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
@@ -104,8 +122,8 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
           </div>
 
           {/* Categories */}
-          {CATEGORY_ORDER.map((cat) => {
-            const items = checklist.items
+          {CATEGORY_ORDER.filter(cat => cat !== "WarningSigns").map((cat) => {
+            const items = checklistItems
               .filter((i) => i.category === cat)
               .sort((a, b) => a.priority === b.priority ? 0 : a.priority === "High" ? -1 : 1);
             if (items.length === 0) return null;
