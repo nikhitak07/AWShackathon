@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [saveError, setSaveError] = useState("");
   const [accessToken, setAccessToken] = useState("");
-  const [username, setUsername] = useState("");
+  const [username] = useState("");
 
   const authHeaders = {
     "Content-Type": "application/json",
@@ -39,7 +39,7 @@ const App: React.FC = () => {
   }, [accessToken]);
 
   if (appState === "login") {
-    return <Login onLogin={(token, user) => { setAccessToken(token); setUsername(user); setAppState("upload"); }} />;
+    return <Login onLogin={(token) => { setAccessToken(token); setAppState("upload"); }} />;
   }
 
   if (appState === "upload" || !checklist) {
