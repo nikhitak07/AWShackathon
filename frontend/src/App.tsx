@@ -2,15 +2,16 @@ import React, { useState, useCallback } from "react";
 import { Uploader } from "./components/Uploader";
 import { ChecklistView } from "./components/ChecklistView";
 import { Login } from "./components/Login";
+import { WelcomePage } from "./components/WelcomePage";
 import { Assistant } from "./components/Assistant";
 import type { Checklist } from "@shared/types";
 
-type AppState = "login" | "upload" | "checklist";
+type AppState = "welcome" | "login" | "upload" | "checklist";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
 const App: React.FC = () => {
-  const [appState, setAppState] = useState<AppState>("login");
+  const [appState, setAppState] = useState<AppState>("welcome");
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [saveError, setSaveError] = useState("");
   const [accessToken, setAccessToken] = useState("");
@@ -37,6 +38,10 @@ const App: React.FC = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken]);
+
+  if (appState === "welcome") {
+    return <WelcomePage onContinue={() => setAppState("login")} />;
+  }
 
   if (appState === "login") {
     return <Login onLogin={(token) => { setAccessToken(token); setAppState("upload"); }} />;
