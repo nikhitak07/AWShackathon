@@ -928,13 +928,6 @@
       "RequireUppercase": true
      }
     },
-    "Schema": [
-     {
-      "Mutable": true,
-      "Name": "name",
-      "Required": false
-     }
-    ],
     "SmsVerificationMessage": "The verification code to your new account is {####}",
     "UserPoolName": "discharge-checklist-users",
     "VerificationMessageTemplate": {
