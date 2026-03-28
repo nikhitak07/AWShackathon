@@ -147,3 +147,47 @@ A web application that allows patients or caregivers to upload photos of hospita
 2. THE System SHALL delete uploaded images from temporary storage within 24 hours of processing.
 3. THE System SHALL restrict access to a User's saved Checklists to that authenticated User only.
 4. THE System SHALL not store raw extracted text beyond the duration of the active processing session.
+
+### Requirement 10: Category Visual Cues
+
+**User Story:** As a User, I want each checklist category to display a distinct colored icon, so that I can quickly identify and navigate between different types of recovery tasks at a glance.
+
+#### Acceptance Criteria
+
+1. THE Pretty_Printer SHALL display a Category_Icon alongside the heading of each Checklist category.
+2. THE Pretty_Printer SHALL assign a unique Category_Icon to each of the following categories: a pill icon for Medications, a calendar icon for Follow-up Appointments, a warning icon for Warning Signs, a fork-and-knife icon for Dietary Restrictions, and an activity icon for Daily Activities.
+3. THE Pretty_Printer SHALL render each Category_Icon in a distinct color that is consistent across all views of the Checklist.
+4. WHEN a new category is added to the Checklist, THE Pretty_Printer SHALL display a default icon for that category.
+5. THE Pretty_Printer SHALL render Category_Icons at a minimum size of 24x24 pixels to ensure legibility on standard display resolutions.
+
+### Requirement 11: Priority and Risk Highlighting
+
+**User Story:** As a User, I want high-risk checklist items to be visually distinguished and shown first within their category, so that I can immediately identify actions that require urgent attention.
+
+#### Acceptance Criteria
+
+1. WHEN the Parser identifies a Checklist_Item, THE Parser SHALL assign a Priority_Level of either High or Routine to that item.
+2. THE Parser SHALL assign a Priority_Level of High to any Checklist_Item that contains a condition requiring immediate medical contact, including but not limited to fever thresholds, chest pain, difficulty breathing, or uncontrolled bleeding.
+3. WHEN the Pretty_Printer renders a category section, THE Pretty_Printer SHALL display all Risk_Items before Routine items within that section.
+4. THE Pretty_Printer SHALL render each Risk_Item with a visually distinct style, including a red or amber color indicator and a prominent label such as "High Priority", to differentiate it from Routine items.
+5. THE Pretty_Printer SHALL render Routine items without a priority indicator.
+6. WHEN a User adds a Checklist_Item manually, THE System SHALL default the Priority_Level to Routine unless the User explicitly selects High.
+7. THE System SHALL provide a mechanism for the User to change the Priority_Level of any Checklist_Item between High and Routine.
+8. WHEN a User changes the Priority_Level of a Checklist_Item, THE System SHALL reorder the items within the affected category to reflect the updated priority and persist the change.
+
+### Requirement 12: AI Health Assistant Chat
+
+**User Story:** As a User, I want to ask natural language questions about my checklist and discharge instructions, so that I can better understand my recovery plan without needing to contact my care team for every question.
+
+#### Acceptance Criteria
+
+1. THE System SHALL provide an AI_Assistant interface that accepts natural language questions from the User about the User's Checklist and discharge instructions.
+2. WHEN a User submits a question, THE AI_Assistant SHALL send the question along with the User's current Checklist content to Amazon Bedrock and return a response.
+3. THE AI_Assistant SHALL respond to User questions in plain, non-clinical language that avoids unexplained medical jargon.
+4. WHEN Amazon Bedrock returns a response, THE AI_Assistant SHALL display the response to the User within 10 seconds of the question being submitted under normal operating conditions.
+5. IF Amazon Bedrock returns an error, THEN THE AI_Assistant SHALL display a message informing the User that the assistant is temporarily unavailable and suggest contacting their care provider.
+6. THE AI_Assistant SHALL include a disclaimer in every response stating that the information provided is not a substitute for professional medical advice.
+7. THE System SHALL not transmit PHI to Amazon Bedrock beyond the content of the User's own Checklist associated with the active session.
+8. THE System SHALL record an Audit_Log entry each time the AI_Assistant is invoked, including the User identifier, timestamp, and source IP address, without logging the content of the question or response.
+9. WHILE a User is unauthenticated, THE System SHALL not permit access to the AI_Assistant interface.
+10. THE AI_Assistant SHALL maintain the context of the current conversation for the duration of the active session, allowing follow-up questions to reference prior exchanges.
