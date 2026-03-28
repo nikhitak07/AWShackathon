@@ -7,7 +7,6 @@ import {
   RespondToAuthChallengeCommand,
   AssociateSoftwareTokenCommand,
   VerifySoftwareTokenCommand,
-  SignUpCommand,
   AuthFlowType,
   ChallengeNameType,
 } from "@aws-sdk/client-cognito-identity-provider";
@@ -21,7 +20,7 @@ interface Props {
   onLogin: (token: string, username: string) => void;
 }
 
-type Step = "credentials" | "signup" | "mfa" | "new_password" | "mfa_setup";
+type Step = "credentials" | "mfa" | "new_password" | "mfa_setup";
 
 export const Login: React.FC<Props> = ({ onLogin }) => {
   const { tokens, theme } = useTheme();
@@ -35,8 +34,6 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
   const [session, setSession] = useState<string | undefined>();
   const [secretCode, setSecretCode] = useState("");
   const [setupTotp, setSetupTotp] = useState("");
-  const [signupName, setSignupName] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -109,7 +106,6 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
     finally { setLoading(false); }
   };
 
-<<<<<<< HEAD
   const inputStyle: React.CSSProperties = {
     width: "100%", padding: "14px 16px", background: "transparent", border: "none",
     fontSize: 15, color: tokens.textInput, outline: "none",
@@ -123,32 +119,6 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
     padding: "15px", background: "linear-gradient(135deg, #007AFF, #0063d1)",
     color: "#fff", border: "none", borderRadius: 14, fontSize: 16, fontWeight: 700,
     cursor: "pointer", opacity: loading ? 0.5 : 1, fontFamily: "inherit",
-=======
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault(); setError(""); setLoading(true);
-    try {
-      await cognitoClient.send(new SignUpCommand({
-        ClientId: CLIENT_ID,
-        Username: username,
-        Password: signupPassword,
-        UserAttributes: [{ Name: "name", Value: signupName }],
-      }));
-      // Auto sign in immediately after signup
-      const res = await cognitoClient.send(new InitiateAuthCommand({
-        AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
-        ClientId: CLIENT_ID,
-        AuthParameters: { USERNAME: username, PASSWORD: signupPassword },
-      }));
-      if (res.AuthenticationResult) finish(res.AuthenticationResult);
-      else if (res.ChallengeName === ChallengeNameType.NEW_PASSWORD_REQUIRED) {
-        setSession(res.Session); setStep("new_password");
-      } else {
-        setStep("credentials");
-      }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Sign up failed.");
-    } finally { setLoading(false); }
->>>>>>> 73da80954935dbeb774baf08a0a59e157cd3a7e5
   };
 
   return (
@@ -185,36 +155,8 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
               {error && <p style={{ color: "#ff453a", fontSize: 13, margin: 0, textAlign: "center" }}>{error}</p>}
               <button style={primaryBtn} type="submit" disabled={loading}>{loading ? "Signing in…" : "Sign In"}</button>
             </form>
-            <p style={s.switchText}>
-              Don't have an account?{" "}
-              <button style={s.switchBtn} onClick={() => { setStep("signup"); setError(""); }}>Sign Up</button>
-            </p>
           </>
         )}
-
-        {step === "signup" && (
-          <>
-            <p style={s.subtitle}>Create an account</p>
-            <form onSubmit={handleSignup} style={s.form}>
-              <input style={s.input} type="text" placeholder="Full name" value={signupName}
-                onChange={(e) => setSignupName(e.target.value)} autoComplete="name" />
-              <input style={s.input} type="text" placeholder="Username" value={username}
-                onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
-              <input style={s.input} type="password" placeholder="Password" value={signupPassword}
-                onChange={(e) => setSignupPassword(e.target.value)} autoComplete="new-password" />
-              <p style={s.hint}>Min 12 chars · upper + lower + number + symbol</p>
-              {error && <p style={s.error}>{error}</p>}
-              <button style={s.button} type="submit" disabled={loading}>
-                {loading ? "Creating account…" : "Create Account"}
-              </button>
-            </form>
-            <p style={s.switchText}>
-              Already have an account?{" "}
-              <button style={s.switchBtn} onClick={() => { setStep("credentials"); setError(""); }}>Sign In</button>
-            </p>
-          </>
-        )}
-
 
         {step === "new_password" && (
           <>
@@ -269,107 +211,3 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
     </div>
   );
 };
-<<<<<<< HEAD
-=======
-
-const s: Record<string, React.CSSProperties> = {
-  page: {
-    minHeight: "100vh",
-    background: "#08080f",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif",
-    overflow: "hidden",
-    position: "relative" as const,
-    padding: 24,
-  },
-  orb1: {
-    position: "absolute" as const, top: "-10%", left: "-5%",
-    width: 500, height: 500,
-    background: "radial-gradient(circle, rgba(0,122,255,0.15) 0%, transparent 65%)",
-    borderRadius: "50%", animation: "float1 12s ease-in-out infinite", pointerEvents: "none" as const,
-  },
-  orb2: {
-    position: "absolute" as const, bottom: "-15%", right: "-10%",
-    width: 600, height: 600,
-    background: "radial-gradient(circle, rgba(88,86,214,0.12) 0%, transparent 65%)",
-    borderRadius: "50%", animation: "float2 15s ease-in-out infinite", pointerEvents: "none" as const,
-  },
-  grid: {
-    position: "absolute" as const, inset: 0,
-    backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)",
-    backgroundSize: "60px 60px", pointerEvents: "none" as const,
-  },
-  card: {
-    position: "relative" as const,
-    zIndex: 1,
-    background: "rgba(255,255,255,0.05)",
-    backdropFilter: "blur(24px)",
-    WebkitBackdropFilter: "blur(24px)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: 24,
-    padding: "40px 36px",
-    width: "100%",
-    maxWidth: 400,
-    boxShadow: "0 24px 80px rgba(0,0,0,0.4)",
-  },
-  logoWrap: { display: "flex", alignItems: "center", gap: 10, marginBottom: 32 },
-  logoIcon: {
-    width: 40, height: 40,
-    background: "linear-gradient(135deg, #007AFF, #5856d6)",
-    borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center",
-    boxShadow: "0 4px 16px rgba(0,122,255,0.35)",
-  },
-  logoText: { fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: "-0.4px" },
-  title: { margin: "0 0 6px", fontSize: 26, fontWeight: 700, color: "#fff", letterSpacing: "-0.5px" },
-  subtitle: { margin: "0 0 24px", fontSize: 14, color: "#636366", lineHeight: 1.5 },
-  form: { display: "flex", flexDirection: "column" as const, gap: 12 },
-  fieldGroup: {
-    background: "rgba(255,255,255,0.07)",
-    borderRadius: 14,
-    border: "1px solid rgba(255,255,255,0.1)",
-    overflow: "hidden",
-  },
-  fieldDivider: { height: 1, background: "rgba(255,255,255,0.08)", margin: "0 16px" },
-  input: {
-    width: "100%",
-    padding: "14px 16px",
-    background: "transparent",
-    border: "none",
-    fontSize: 15,
-    color: "#fff",
-    outline: "none",
-    boxSizing: "border-box" as const,
-    display: "block",
-    fontFamily: "inherit",
-  },
-  hint: { fontSize: 12, color: "#636366", margin: "0 0 4px" },
-  secretCode: {
-    fontFamily: "monospace",
-    fontSize: 12,
-    color: "#8e8e93",
-    background: "rgba(255,255,255,0.05)",
-    borderRadius: 8,
-    padding: "10px 14px",
-    wordBreak: "break-all" as const,
-    marginBottom: 12,
-    border: "1px solid rgba(255,255,255,0.08)",
-  },
-  button: {
-    padding: "15px",
-    background: "linear-gradient(135deg, #007AFF, #0063d1)",
-    color: "#fff",
-    border: "none",
-    borderRadius: 14,
-    fontSize: 16,
-    fontWeight: 700,
-    cursor: "pointer",
-    letterSpacing: "-0.2px",
-    transition: "opacity 0.15s",
-  },
-  error: { color: "#e53e3e", fontSize: 13, margin: 0 },
-  switchText: { fontSize: 13, color: "#8e8e93", textAlign: "center" as const, marginTop: 12 },
-  switchBtn: { background: "none", border: "none", color: "#3182ce", cursor: "pointer", fontSize: 13, fontWeight: 600, padding: 0 },
-};
->>>>>>> 73da80954935dbeb774baf08a0a59e157cd3a7e5

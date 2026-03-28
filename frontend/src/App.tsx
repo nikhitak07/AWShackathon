@@ -2,16 +2,16 @@ import React, { useState, useCallback } from "react";
 import { Uploader } from "./components/Uploader";
 import { ChecklistView } from "./components/ChecklistView";
 import { Login } from "./components/Login";
+import { WelcomePage } from "./components/WelcomePage";
 import { Assistant } from "./components/Assistant";
 import { History } from "./components/History";
 import type { Checklist } from "@shared/types";
 
-type AppState = "login" | "upload" | "checklist";
+type AppState = "welcome" | "login" | "upload" | "checklist";
 type Tab = "checklist" | "history";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
-/** Resets completed flags if the checklist was last updated on a previous day */
 function applyDailyReset(cl: Checklist): Checklist {
   const today = new Date().toDateString();
   const lastUpdate = new Date(cl.updatedAt).toDateString();
@@ -23,7 +23,6 @@ function applyDailyReset(cl: Checklist): Checklist {
   };
 }
 
-/** Decode userId (sub) from JWT token */
 function getUserId(token: string): string {
   try {
     return JSON.parse(atob(token.split(".")[1])).sub as string;
@@ -33,10 +32,11 @@ function getUserId(token: string): string {
 }
 
 const App: React.FC = () => {
-  const [appState, setAppState] = useState<AppState>("login");
+  const [appState, setAppState] = useState<AppState>("welcome");
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [saveError, setSaveError] = useState("");
   const [accessToken, setAccessToken] = useState("");
+  const [username, setUsername] = useState("");
   const [userId, setUserId] = useState("");
   const [tab, setTab] = useState<Tab>("checklist");
 
@@ -63,11 +63,16 @@ const App: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken]);
 
+  if (appState === "welcome") {
+    return <WelcomePage onContinue={() => setAppState("login")} />;
+  }
+
   if (appState === "login") {
     return (
       <Login
-        onLogin={(token) => {
+        onLogin={(token, user) => {
           setAccessToken(token);
+          setUsername(user);
           setUserId(getUserId(token));
           setAppState("upload");
         }}
@@ -79,11 +84,8 @@ const App: React.FC = () => {
     return (
       <Uploader
         accessToken={accessToken}
-<<<<<<< HEAD
         username={username}
         onHome={() => setAppState("welcome")}
-=======
->>>>>>> 73da80954935dbeb774baf08a0a59e157cd3a7e5
         onChecklistReady={async (cl) => {
           const reset = applyDailyReset(cl);
           setChecklist(reset);
@@ -111,28 +113,14 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Tab bar */}
       <div style={tabBar}>
-        <button
-          style={{ ...tabBtn, ...(tab === "checklist" ? tabBtnActive : {}) }}
-          onClick={() => setTab("checklist")}
-        >
+        <button style={{ ...tabBtn, ...(tab === "checklist" ? tabBtnActive : {}) }} onClick={() => setTab("checklist")}>
           Today
         </button>
-        <button
-          style={{ ...tabBtn, ...(tab === "history" ? tabBtnActive : {}) }}
-          onClick={() => setTab("history")}
-        >
+        <button style={{ ...tabBtn, ...(tab === "history" ? tabBtnActive : {}) }} onClick={() => setTab("history")}>
           History
         </button>
-        <button
-          style={{ ...tabBtn, marginLeft: "auto" }}
-          onClick={() => {
-            setChecklist(null);
-            setSaveError("");
-            setAppState("upload");
-          }}
-        >
+        <button style={{ ...tabBtn, marginLeft: "auto" }} onClick={() => { setChecklist(null); setSaveError(""); setAppState("upload"); }}>
           + New Upload
         </button>
       </div>
@@ -141,11 +129,9 @@ const App: React.FC = () => {
         <ChecklistView
           checklist={checklist}
           onChange={handleChecklistChange}
-          onNewUpload={() => {
-            setChecklist(null);
-            setSaveError("");
-            setAppState("upload");
-          }}
+          username={username}
+          accessToken={accessToken}
+          onNewUpload={() => { setChecklist(null); setSaveError(""); setAppState("upload"); }}
         />
       )}
 
@@ -154,10 +140,7 @@ const App: React.FC = () => {
           <History
             accessToken={accessToken}
             userId={userId}
-            onOpen={(cl) => {
-              setChecklist(applyDailyReset(cl));
-              setTab("checklist");
-            }}
+            onOpen={(cl) => { setChecklist(applyDailyReset(cl)); setTab("checklist"); }}
           />
         </div>
       )}
