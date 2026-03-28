@@ -40,8 +40,22 @@ const HIGH_PRIORITY_KEYWORDS = [
 ];
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Filters
 // ---------------------------------------------------------------------------
+
+// Patterns that indicate header/metadata lines to skip
+const SKIP_PATTERNS = [
+  /^(patient|name|dob|date of birth|address|phone|mrn|medical record|hospital|clinic|physician|doctor|provider|discharge date|admission|room|ward|floor|unit|facility|insurance|policy|group|id#|id:|#\d)/i,
+  /^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}$/, // standalone dates
+  /^\d{3}[-.\s]\d{3}[-.\s]\d{4}$/, // phone numbers
+  /^[A-Z][a-z]+,?\s+[A-Z][a-z]+$/, // "Firstname Lastname" or "Lastname, Firstname"
+  /^\d+$/, // pure numbers
+  /^(page|pg)\s*\d/i, // page numbers
+];
+
+function shouldSkip(line: string): boolean {
+  return SKIP_PATTERNS.some((p) => p.test(line.trim()));
+}
 
 function categorize(text: string): Category {
   const lower = text.toLowerCase();
@@ -74,7 +88,7 @@ export function parseText(rawText: string, userId: string): Checklist {
   const lines = rawText
     .split(/\n|•|;/)
     .map((l) => l.trim())
-    .filter((l) => l.length > 5);
+    .filter((l) => l.length > 5 && !shouldSkip(l));
 
   if (lines.length === 0) {
     throw new ParseError(
@@ -133,12 +147,69 @@ export function parseChecklist(json: string): Checklist {
 // ---------------------------------------------------------------------------
 
 import type { APIGatewayProxyHandler } from "aws-lambda";
+import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type,Authorization",
   "Content-Type": "application/json",
 };
+
+const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION ?? "us-east-1" });
+const MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0";
+
+const SYSTEM_PROMPT = `You are a medical discharge document parser. 
+Extract ONLY actionable patient instructions from the document text.
+Ignore: patient name, DOB, address, phone, MRN, hospital name, physician name, dates, insurance info, and any other personal identifiers.
+Focus on: medications to take, follow-up appointments, dietary restrictions, warning signs to watch for, and daily activity instructions.
+Return a JSON array of objects with this exact shape:
+[{"text":"instruction text","category":"Medications|FollowUpAppointments|DietaryRestrictions|WarningSigns|DailyActivities","priority":"High|Routine","dateTime":"ISO8601 or null"}]
+Priority is High only for: fever, chest pain, difficulty breathing, uncontrolled bleeding, severe symptoms, emergency situations.
+Return ONLY the JSON array, no other text.`;
+
+async function parseWithBedrock(rawText: string, userId: string): Promise<Checklist> {
+  const response = await bedrock.send(new InvokeModelCommand({
+    modelId: MODEL_ID,
+    contentType: "application/json",
+    accept: "application/json",
+    body: JSON.stringify({
+      anthropic_version: "bedrock-2023-05-31",
+      max_tokens: 2048,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: `Extract checklist items from this discharge document:\n\n${rawText}` }],
+    }),
+  }));
+
+  const responseBody = JSON.parse(new TextDecoder().decode(response.body));
+  const content = responseBody.content?.[0]?.text ?? "[]";
+
+  // Extract JSON array from response (Claude sometimes adds markdown)
+  const jsonMatch = content.match(/\[[\s\S]*\]/);
+  if (!jsonMatch) throw new ParseError("No checklist items could be found. Please check the image quality and try again.");
+
+  const items: Array<{ text: string; category: Category; priority: PriorityLevel; dateTime?: string | null }> =
+    JSON.parse(jsonMatch[0]);
+
+  if (!items.length) {
+    throw new ParseError("No checklist items could be found. Please check the image quality and try again.");
+  }
+
+  const now = new Date().toISOString();
+  return {
+    id: uuidv4(),
+    userId,
+    createdAt: now,
+    updatedAt: now,
+    items: items.map((item) => ({
+      id: uuidv4(),
+      text: item.text,
+      category: item.category,
+      priority: item.priority,
+      dateTime: item.dateTime ?? undefined,
+      completed: false,
+    })),
+  };
+}
 
 export const parseHandler: APIGatewayProxyHandler = async (event) => {
   let body: { rawText?: string; userId?: string };
@@ -154,7 +225,7 @@ export const parseHandler: APIGatewayProxyHandler = async (event) => {
   }
 
   try {
-    const checklist = parseText(rawText, userId);
+    const checklist = await parseWithBedrock(rawText, userId);
     return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(checklist) };
   } catch (err) {
     const message = err instanceof ParseError ? err.message : "Failed to generate checklist.";

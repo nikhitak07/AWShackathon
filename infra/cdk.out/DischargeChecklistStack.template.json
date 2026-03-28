@@ -1294,7 +1294,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "8f925a6ae788e9a0a6689b173485cfb1b8875840b0a9335e380bd55c47bfd626.zip"
+     "S3Key": "c98065259f94c7faf70d08e88322e2a0ca63231fe74b0c463aeaca818209f867.zip"
     },
     "Environment": {
      "Variables": {
@@ -1323,7 +1323,7 @@
      ]
     },
     "Runtime": "nodejs20.x",
-    "Timeout": 15
+    "Timeout": 30
    },
    "DependsOn": [
     "ApiLambdaRoleDefaultPolicy84E47AF4",
@@ -1331,7 +1331,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/parseHandler/Resource",
-    "aws:asset:path": "asset.8f925a6ae788e9a0a6689b173485cfb1b8875840b0a9335e380bd55c47bfd626",
+    "aws:asset:path": "asset.c98065259f94c7faf70d08e88322e2a0ca63231fe74b0c463aeaca818209f867",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }

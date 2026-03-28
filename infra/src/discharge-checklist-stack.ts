@@ -252,7 +252,7 @@ export class DischargeChecklistStack extends cdk.Stack {
     // -------------------------------------------------------------------------
     const uploadFn = fn("handlers/uploader.ts", "uploadHandler");
     const extractFn = fn("handlers/extractor.ts", "extractHandler", 35);
-    const parseFn = fn("handlers/parser.ts", "parseHandler");
+    const parseFn = fn("handlers/parser.ts", "parseHandler", 30);
     const checklistSaveFn = fn("handlers/checklist.ts", "saveHandler", 10);
     const checklistGetFn = fn("handlers/checklist.ts", "getHandler", 10);
     const checklistUpdateFn = fn("handlers/checklist.ts", "updateHandler", 10);
