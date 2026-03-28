@@ -21,6 +21,7 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import type {
   PreAuthenticationTriggerEvent,
   PostAuthenticationTriggerEvent,
+  PreSignUpTriggerEvent,
 } from "aws-lambda";
 
 const LOCKOUT_TABLE = process.env.LOCKOUT_TABLE_NAME ?? "auth_lockout";
@@ -30,6 +31,18 @@ const WINDOW_SECONDS = 15 * 60; // 15 minutes
 
 const ddb = new DynamoDBClient({});
 const ses = new SESClient({});
+
+// ---------------------------------------------------------------------------
+// Pre Sign-up trigger — auto-confirm users so no email verification is needed
+// ---------------------------------------------------------------------------
+
+export async function preSignUpHandler(
+  event: PreSignUpTriggerEvent
+): Promise<PreSignUpTriggerEvent> {
+  event.response.autoConfirmUser = true;
+  event.response.autoVerifyEmail = false;
+  return event;
+}
 
 // ---------------------------------------------------------------------------
 // Pre-Authentication trigger

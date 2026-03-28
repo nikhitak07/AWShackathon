@@ -126,6 +126,15 @@ export class DischargeChecklistStack extends cdk.Stack {
       resources: ["*"],
     }));
 
+    const preSignUpLambda = new lambdaNodejs.NodejsFunction(this, "PreSignUpAutoConfirmTrigger", {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      entry: path.resolve(__dirname, "../../backend/src/auth/lockoutTriggers.ts"),
+      handler: "preSignUpHandler",
+      role: triggerRole,
+      timeout: cdk.Duration.seconds(5),
+      bundling: { externalModules: [] },
+    });
+
     const preAuthLambda = new lambdaNodejs.NodejsFunction(this, "PreAuthLockoutTrigger", {
       runtime: lambda.Runtime.NODEJS_20_X,
       entry: path.resolve(__dirname, "../../backend/src/auth/lockoutTriggers.ts"),
@@ -166,6 +175,7 @@ export class DischargeChecklistStack extends cdk.Stack {
       },
       mfa: cognito.Mfa.OFF,
       lambdaTriggers: {
+        preSignUp: preSignUpLambda,
         preAuthentication: preAuthLambda,
         postAuthentication: postAuthLambda,
       },

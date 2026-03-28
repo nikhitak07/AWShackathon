@@ -28,6 +28,7 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
   const isDark = theme === "dark";
 
   const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [totp, setTotp] = useState("");
@@ -46,7 +47,7 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username || !password) { setError("Please fill in all fields."); return; }
+    if (!username || !name || !password) { setError("Please fill in all fields."); return; }
     if (password !== confirmPassword) { setError("Passwords do not match."); return; }
     setError(""); setLoading(true);
     try {
@@ -54,6 +55,7 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
         ClientId: CLIENT_ID,
         Username: username,
         Password: password,
+        UserAttributes: [{ Name: "name", Value: name }],
       }));
       setPassword(""); setConfirmPassword("");
       setStep("credentials");
@@ -189,6 +191,8 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
             <p style={{ margin: "0 0 24px", fontSize: 14, color: tokens.textMuted, lineHeight: 1.5 }}>Sign up to get started.</p>
             <form onSubmit={handleSignUp} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={fieldGroup}>
+                <input style={inputStyle} type="text" placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
+                <div style={{ height: 1, background: tokens.fieldDivider, margin: "0 16px" }} />
                 <input style={inputStyle} type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
                 <div style={{ height: 1, background: tokens.fieldDivider, margin: "0 16px" }} />
                 <input style={inputStyle} type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
