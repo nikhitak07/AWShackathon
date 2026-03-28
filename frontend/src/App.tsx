@@ -52,6 +52,7 @@ const App: React.FC = () => {
       <Uploader
         accessToken={accessToken}
         username={username}
+        onHome={() => setAppState("welcome")}
         onChecklistReady={async (cl) => {
           setChecklist(cl);
           setAppState("checklist");
