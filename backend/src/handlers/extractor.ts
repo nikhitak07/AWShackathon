@@ -1,29 +1,24 @@
 /**
- * Extractor Lambda handler — calls Amazon Textract to extract text from
- * uploaded images/PDFs stored in S3.
+ * Extractor Lambda handler — calls Amazon Rekognition to extract text from
+ * uploaded images stored in S3.
  *
- * - Images (JPEG/PNG): uses DetectDocumentText
- * - PDFs: uses AnalyzeDocument with FORMS feature
- * - Enforces 30-second timeout (Req 2.5)
- * - Never persists raw extracted text (Req 9.4)
- * - Throws ExtractionError on Textract failure (Req 2.3)
+ * Uses DetectText for images (JPEG/PNG).
+ * Note: Rekognition does not support PDFs — PDF uploads will return an error.
  *
  * Requirements: 2.1, 2.2, 2.3, 2.5, 9.4
  */
 
 import {
-  TextractClient,
-  DetectDocumentTextCommand,
-  AnalyzeDocumentCommand,
-  FeatureType,
-} from "@aws-sdk/client-textract";
+  RekognitionClient,
+  DetectTextCommand,
+} from "@aws-sdk/client-rekognition";
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import type { ExtractionRequest, ExtractionResult } from "@shared/types";
 
 const IMAGES_BUCKET = process.env.IMAGES_BUCKET ?? "discharge-images-temp";
 const TIMEOUT_MS = 30_000;
 
-const textract = new TextractClient({});
+const rekognition = new RekognitionClient({});
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -46,20 +41,17 @@ export class ExtractionError extends Error {
 // Core extraction logic (exported for unit testing)
 // ---------------------------------------------------------------------------
 
-/**
- * Calls Textract and returns concatenated raw text.
- * Selects DetectDocumentText for images, AnalyzeDocument for PDFs.
- * Throws ExtractionError on any Textract failure.
- */
 export async function extractText(
   req: ExtractionRequest,
   contentType?: string
 ): Promise<ExtractionResult> {
-  const document = {
-    S3Object: { Bucket: IMAGES_BUCKET, Name: req.uploadId },
-  };
-
   const isPdf = contentType === "application/pdf" || req.uploadId.toLowerCase().endsWith(".pdf");
+
+  if (isPdf) {
+    throw new ExtractionError(
+      "PDF extraction is not supported. Please upload a JPEG or PNG image."
+    );
+  }
 
   const timeoutPromise = new Promise<never>((_, reject) =>
     setTimeout(
@@ -69,36 +61,27 @@ export async function extractText(
   );
 
   try {
-    let blocks: Array<{ BlockType?: string; Text?: string }>;
+    const result = await Promise.race([
+      rekognition.send(
+        new DetectTextCommand({
+          Image: {
+            S3Object: { Bucket: IMAGES_BUCKET, Name: req.uploadId },
+          },
+        })
+      ),
+      timeoutPromise,
+    ]);
 
-    if (isPdf) {
-      const result = await Promise.race([
-        textract.send(
-          new AnalyzeDocumentCommand({
-            Document: document,
-            FeatureTypes: [FeatureType.FORMS],
-          })
-        ),
-        timeoutPromise,
-      ]);
-      blocks = result.Blocks ?? [];
-    } else {
-      const result = await Promise.race([
-        textract.send(new DetectDocumentTextCommand({ Document: document })),
-        timeoutPromise,
-      ]);
-      blocks = result.Blocks ?? [];
-    }
-
-    // Concatenate LINE blocks to preserve natural reading order
-    const rawText = blocks
-      .filter((b) => b.BlockType === "LINE" && b.Text)
-      .map((b) => b.Text!)
+    // Filter LINE detections and join into raw text
+    const rawText = (result.TextDetections ?? [])
+      .filter((d) => d.Type === "LINE" && d.DetectedText)
+      .map((d) => d.DetectedText!)
       .join("\n");
 
     return { rawText, uploadId: req.uploadId };
   } catch (err) {
     if (err instanceof ExtractionError) throw err;
+    console.error("Rekognition error:", err);
     throw new ExtractionError(
       "Text extraction failed. Please check the image quality and try again."
     );
@@ -110,9 +93,9 @@ export async function extractText(
 // ---------------------------------------------------------------------------
 
 export const extractHandler: APIGatewayProxyHandler = async (event) => {
-  let body: ExtractionRequest;
+  let body: ExtractionRequest & { contentType?: string };
   try {
-    body = JSON.parse(event.body ?? "{}") as ExtractionRequest;
+    body = JSON.parse(event.body ?? "{}") as ExtractionRequest & { contentType?: string };
   } catch {
     return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
   }
@@ -121,18 +104,12 @@ export const extractHandler: APIGatewayProxyHandler = async (event) => {
     return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "uploadId and userId are required." }) };
   }
 
-  // Derive content type from query string or body if provided
   const contentType =
-    (event.queryStringParameters?.contentType as string | undefined) ??
-    (body as ExtractionRequest & { contentType?: string }).contentType;
+    (event.queryStringParameters?.contentType as string | undefined) ?? body.contentType;
 
   try {
     const result = await extractText(body, contentType);
-    return {
-      statusCode: 200,
-      headers: CORS_HEADERS,
-      body: JSON.stringify(result),
-    };
+    return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(result) };
   } catch (err) {
     const message = err instanceof ExtractionError ? err.message : "An unexpected error occurred during extraction.";
     return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ error: message }) };

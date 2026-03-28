@@ -43,10 +43,13 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "", 
       const putRes = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
       if (!putRes.ok) throw new Error("Failed to upload file.");
 
+      // Decode userId from JWT token (sub claim)
+      const userId = JSON.parse(atob(accessToken.split(".")[1])).sub as string;
+
       const extractRes = await fetch(`${API_BASE}/extract`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}` },
-        body: JSON.stringify({ uploadId, contentType: file.type }),
+        body: JSON.stringify({ uploadId, contentType: file.type, userId }),
       });
       if (!extractRes.ok) {
         const { error } = await extractRes.json().catch(() => ({}));
@@ -57,7 +60,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "", 
       const parseRes = await fetch(`${API_BASE}/parse`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${accessToken}` },
-        body: JSON.stringify({ rawText }),
+        body: JSON.stringify({ rawText, userId }),
       });
       if (!parseRes.ok) {
         const { error } = await parseRes.json().catch(() => ({}));
@@ -233,7 +236,7 @@ const s: Record<string, React.CSSProperties> = {
     transition: "all 0.2s ease",
     background: "#fafafa",
   },
-  dropzoneActive: { borderColor: "#007AFF", background: "#f0f7ff" },
+  dropzoneActive: { border: "2px dashed #007AFF", background: "#f0f7ff" },
   uploadIconWrap: {
     width: 52, height: 52,
     background: "#e8f0fe",

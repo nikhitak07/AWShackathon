@@ -1159,10 +1159,7 @@
        ]
       },
       {
-       "Action": [
-        "textract:DetectDocumentText",
-        "textract:AnalyzeDocument"
-       ],
+       "Action": "rekognition:DetectText",
        "Effect": "Allow",
        "Resource": "*"
       },
@@ -1250,7 +1247,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "a5c018f27179bff72bddb3c82c9e5d3b874be6a597d3fa35820673a609cd3c48.zip"
+     "S3Key": "7e9d7ebd1273df99fd3522d4c635fe5534e3ced72beeafb4786acc5de120eaa2.zip"
     },
     "Environment": {
      "Variables": {
@@ -1287,7 +1284,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/extractHandler/Resource",
-    "aws:asset:path": "asset.a5c018f27179bff72bddb3c82c9e5d3b874be6a597d3fa35820673a609cd3c48",
+    "aws:asset:path": "asset.7e9d7ebd1273df99fd3522d4c635fe5534e3ced72beeafb4786acc5de120eaa2",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }

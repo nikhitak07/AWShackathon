@@ -198,7 +198,7 @@ export class DischargeChecklistStack extends cdk.Stack {
     this.exportsBucket.grantReadWrite(apiLambdaRole);
 
     apiLambdaRole.addToPolicy(new iam.PolicyStatement({
-      actions: ["textract:DetectDocumentText", "textract:AnalyzeDocument"],
+      actions: ["rekognition:DetectText"],
       resources: ["*"],
     }));
     apiLambdaRole.addToPolicy(new iam.PolicyStatement({
