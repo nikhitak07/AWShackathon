@@ -7,6 +7,7 @@ import {
   RespondToAuthChallengeCommand,
   AssociateSoftwareTokenCommand,
   VerifySoftwareTokenCommand,
+  SignUpCommand,
   AuthFlowType,
   ChallengeNameType,
 } from "@aws-sdk/client-cognito-identity-provider";
@@ -20,7 +21,7 @@ interface Props {
   onLogin: (token: string, username: string) => void;
 }
 
-type Step = "credentials" | "mfa" | "new_password" | "mfa_setup";
+type Step = "credentials" | "signup" | "mfa" | "new_password" | "mfa_setup";
 
 export const Login: React.FC<Props> = ({ onLogin }) => {
   const { tokens, theme } = useTheme();
