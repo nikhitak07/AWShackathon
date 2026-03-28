@@ -6,7 +6,7 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
 
 ## Tasks
 
-- [-] 1. Project scaffolding and shared types
+- [x] 1. Project scaffolding and shared types
   - Create the React + TypeScript frontend project (Vite or CRA) and Lambda project structure
   - Define all shared TypeScript interfaces: `ChecklistItem`, `Checklist`, `Category`, `PriorityLevel`, `AuditLogEntry`, `AuditEventType`, `UploadRequest`, `UploadResponse`, `ExtractionRequest`, `ExtractionResult`, `AssistantRequest`, `AssistantResponse`, `Message`
   - Set up DynamoDB table definitions (`checklists`, `audit_log`) and S3 bucket configurations (`discharge-images-temp`, `discharge-exports`) as IaC (CDK or CloudFormation)
@@ -14,7 +14,7 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
   - _Requirements: 8.1, 8.2, 9.1_
 
 - [ ] 2. Auth_Service — Cognito integration
-  - [~] 2.1 Implement `login`, `logout`, and `refreshSession` functions backed by Amazon Cognito User Pools
+  - [x] 2.1 Implement `login`, `logout`, and `refreshSession` functions backed by Amazon Cognito User Pools
     - Enforce password policy: min 12 chars, upper + lower + digit + special character
     - Enable TOTP MFA enforcement in Cognito configuration
     - Set session token expiry to 8 hours

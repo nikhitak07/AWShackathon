@@ -1,0 +1,10 @@
+{
+  "name": "discharge-checklist",
+  "private": true,
+  "workspaces": ["shared", "frontend", "backend", "infra"],
+  "scripts": {
+    "build": "npm run build --workspace=shared && npm run build --workspace=frontend && npm run build --workspace=backend",
+    "typecheck": "npm run typecheck --workspace=shared && npm run typecheck --workspace=backend",
+    "test": "npm run test --workspace=frontend && npm run test --workspace=backend"
+  }
+}
