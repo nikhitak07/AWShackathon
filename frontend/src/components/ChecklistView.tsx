@@ -53,7 +53,7 @@ function formatCountdown(target: Date, now: Date): string {
 }
 
 const CATEGORY_ORDER: Category[] = [
-  "DailyActivities", "WarningSigns", "Medications", "FollowUpAppointments", "DietaryRestrictions",
+  "Medications", "DailyActivities", "WarningSigns", "FollowUpAppointments", "DietaryRestrictions",
 ];
 
 interface Props {
@@ -64,7 +64,7 @@ interface Props {
   accessToken?: string;
 }
 
-export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUpload, username = "", accessToken = "" }) => {
+export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUpload, accessToken = "" }) => {
   const { tokens, theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -102,7 +102,6 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
   const completedCount = checklistItems.filter((i) => i.completed).length;
   const total = checklistItems.length;
   const pct = total ? Math.round((completedCount / total) * 100) : 0;
-  const greeting = username ? `Hello, ${username}.` : "Hello.";
 
   // Countdown timer
   const [now, setNow] = useState(new Date());
@@ -158,7 +157,6 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
       <div style={{ display: "flex", gap: 24, width: "100%", padding: "28px 40px 48px", alignItems: "flex-start", boxSizing: "border-box" }}>
         {/* Left: checklist */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ margin: "0 0 2px", fontSize: 15, color: tokens.textMuted, fontWeight: 500 }}>{greeting}</p>
           <h1 style={{ margin: "0 0 20px", fontSize: 28, fontWeight: 700, color: tokens.textPrimary, letterSpacing: "-0.5px" }}>Your Recovery Checklist</h1>
           {warningSigns.length > 0 && (
             <div style={{ background: isDark ? "rgba(255,149,0,0.12)" : "#fff8ed", border: "1.5px solid rgba(255,149,0,0.4)", borderRadius: 14, padding: "14px 18px", marginBottom: 14 }}>
@@ -317,7 +315,7 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
         </div>
 
         {/* Right: timer, calendar, AI Assistant */}
-        <div style={{ width: 340, flexShrink: 0, position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ width: 340, flexShrink: 0, position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14, alignSelf: "flex-start" }}>
           {/* Reset countdown */}
           <div style={{ background: tokens.cardBg, border: `1px solid ${tokens.border}`, borderRadius: 14, padding: "16px 18px" }}>
             <p style={{ margin: "0 0 4px", fontSize: 12, color: tokens.textMuted, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.5px" }}>Checklist resets in</p>

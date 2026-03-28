@@ -100,9 +100,7 @@ export const Assistant: React.FC<Props> = ({ checklist, accessToken }) => {
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
+          <span style={{ fontSize: 26, lineHeight: 1 }}>🩺</span>
         )}
       </button>
 
@@ -123,9 +121,7 @@ export const Assistant: React.FC<Props> = ({ checklist, accessToken }) => {
           {/* Header */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 16px", borderBottom: `1px solid ${tokens.border}`, background: headerBg }}>
             <div style={{ width: 36, height: 36, background: "linear-gradient(135deg, #007AFF, #5856d6)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
+              <span style={{ fontSize: 20, lineHeight: 1 }}>🩺</span>
             </div>
             <div style={{ flex: 1 }}>
               <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: tokens.textPrimary, letterSpacing: "-0.1px" }}>MediBuddy</p>
@@ -145,9 +141,7 @@ export const Assistant: React.FC<Props> = ({ checklist, accessToken }) => {
               <div key={i} style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start", alignItems: "flex-end", gap: 6 }}>
                 {m.role === "assistant" && (
                   <div style={{ width: 24, height: 24, background: "linear-gradient(135deg,#007AFF,#5856d6)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
+                    <span style={{ fontSize: 13, lineHeight: 1 }}>🩺</span>
                   </div>
                 )}
                 <div style={{
@@ -175,9 +169,7 @@ export const Assistant: React.FC<Props> = ({ checklist, accessToken }) => {
             {loading && (
               <div style={{ display: "flex", alignItems: "flex-end", gap: 6 }}>
                 <div style={{ width: 24, height: 24, background: "linear-gradient(135deg,#007AFF,#5856d6)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                  </svg>
+                  <span style={{ fontSize: 13, lineHeight: 1 }}>🩺</span>
                 </div>
                 <div style={{ padding: "9px 13px", borderRadius: "16px 16px 16px 4px", background: aiBubbleBg, display: "flex", gap: 4, alignItems: "center" }}>
                   {[0, 0.2, 0.4].map((d, i) => (
