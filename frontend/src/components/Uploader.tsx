@@ -34,12 +34,51 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady }) => {
     processFile(file);
   };
 
-  const processFile = async (_file: File) => {
+  const processFile = async (file: File) => {
     setLoading(true);
+    setError("");
     try {
-      // Simulate extraction; in production this calls the Textract Lambda
-      await new Promise((r) => setTimeout(r, 1200));
-      onChecklistReady(getMockChecklist("demo-user"));
+      // Step 1: get a pre-signed upload URL
+      const uploadRes = await fetch("/api/upload-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fileName: file.name, contentType: file.type }),
+      });
+      if (!uploadRes.ok) throw new Error("Failed to get upload URL.");
+      const { uploadId, uploadUrl } = await uploadRes.json();
+
+      // Step 2: PUT the file directly to S3
+      const putRes = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      if (!putRes.ok) throw new Error("Failed to upload file.");
+
+      // Step 3: call the Extractor Lambda
+      const extractRes = await fetch("/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uploadId, contentType: file.type }),
+      });
+      if (!extractRes.ok) {
+        const { error } = await extractRes.json().catch(() => ({}));
+        throw new Error(error ?? "Text extraction failed. Please check the image quality and try again.");
+      }
+      const { rawText } = await extractRes.json();
+
+      // Step 4: call the Parser Lambda
+      const parseRes = await fetch("/api/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rawText }),
+      });
+      if (!parseRes.ok) {
+        const { error } = await parseRes.json().catch(() => ({}));
+        throw new Error(error ?? "Failed to generate checklist.");
+      }
+      const checklist = await parseRes.json();
+      onChecklistReady(checklist);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to process file.");
     } finally {
