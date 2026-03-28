@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import type { Checklist } from "@shared/types";
 import { getMockChecklist } from "../utils/parser";
-import { AssistantChat } from "./AssistantChat";
 import { HeroSection } from "./HeroSection";
 
 const ACCEPTED = ["image/jpeg", "image/png", "application/pdf"];
@@ -147,8 +146,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "", 
             </button>
           </div>
 
-          {/* AI Chat card */}
-          <AssistantChat accessToken={accessToken} />
+          {/* AI Chat card removed — assistant available after upload */}
         </div>
       </div>
 
