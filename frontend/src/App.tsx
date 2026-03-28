@@ -14,7 +14,6 @@ const App: React.FC = () => {
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [saveError, setSaveError] = useState("");
   const [accessToken, setAccessToken] = useState("");
-  const [username] = useState("");
 
   const authHeaders = {
     "Content-Type": "application/json",
@@ -47,7 +46,6 @@ const App: React.FC = () => {
     return (
       <Uploader
         accessToken={accessToken}
-        username={username}
         onChecklistReady={async (cl) => {
           setChecklist(cl);
           setAppState("checklist");

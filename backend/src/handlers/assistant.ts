@@ -85,7 +85,7 @@ export const assistantHandler: APIGatewayProxyHandler = async (event) => {
     return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "Invalid request body." }) };
   }
 
-  if (!body.question || !body.checklistContext) {
+  if (!body.question || !body.checklistContext || !body.checklistContext.id) {
     return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "question and checklistContext are required." }) };
   }
 
