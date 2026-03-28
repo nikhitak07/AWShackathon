@@ -16,6 +16,14 @@ A web application that allows patients or caregivers to upload photos of hospita
 - **Extractor**: The component that sends images to Textract and receives extracted text
 - **Parser**: The component that processes extracted text into structured Checklist data
 - **Pretty_Printer**: The component that formats Checklist data for display in the UI
+- **Auth_Service**: The component responsible for user authentication and session management, backed by Amazon Cognito
+- **Audit_Log**: An immutable, append-only record of security-relevant events within the System
+- **PHI**: Protected Health Information as defined under HIPAA, including any data derived from discharge papers
+- **Category_Icon**: A visual icon associated with a Checklist category (e.g., pill icon for Medications, calendar icon for Appointments, warning icon for Warning Signs)
+- **Priority_Level**: A classification assigned to a Checklist_Item indicating its urgency, either High or Routine
+- **Risk_Item**: A Checklist_Item with a Priority_Level of High, typically involving conditions that require immediate medical attention (e.g., fever thresholds, chest pain)
+- **AI_Assistant**: The conversational component powered by Amazon Bedrock that answers User questions about the Checklist and discharge instructions in plain language
+- **Bedrock**: Amazon Bedrock, the AWS AI service used to power the AI_Assistant
 
 ## Requirements
 
@@ -57,9 +65,9 @@ A web application that allows patients or caregivers to upload photos of hospita
 4. THE Parser SHALL produce a Checklist containing at least all Checklist_Items explicitly stated in the extracted text.
 5. FOR ALL valid extracted text inputs, parsing then formatting then parsing SHALL produce an equivalent Checklist (round-trip property).
 
-### Requirement 4: Checklist Display
+### Requirement 4: Checklist Display and Editing
 
-**User Story:** As a User, I want to view my generated checklist in a clear, organized format, so that I can easily understand and follow my recovery instructions.
+**User Story:** As a User, I want to view and edit my generated checklist in a clear, organized format, so that I can customize it to match my actual recovery needs and easily track my progress.
 
 #### Acceptance Criteria
 
@@ -68,6 +76,13 @@ A web application that allows patients or caregivers to upload photos of hospita
 3. WHEN a User marks a Checklist_Item as complete, THE System SHALL visually distinguish the completed item from incomplete items.
 4. THE Pretty_Printer SHALL display Checklist_Items in the order they were identified within each category.
 5. WHERE a Checklist_Item includes a date or time, THE Pretty_Printer SHALL display that date or time alongside the item.
+6. THE System SHALL provide a mechanism for the User to add a new Checklist_Item to any existing category.
+7. WHEN a User adds a Checklist_Item, THE System SHALL append the new item to the selected category and persist the change.
+8. THE System SHALL provide a mechanism for the User to modify the text of any existing Checklist_Item.
+9. WHEN a User modifies a Checklist_Item, THE System SHALL save the updated text and display the revised item in place.
+10. THE System SHALL provide a mechanism for the User to delete any existing Checklist_Item.
+11. WHEN a User deletes a Checklist_Item, THE System SHALL remove the item from the Checklist and persist the change.
+12. IF a User deletes all Checklist_Items within a category, THEN THE System SHALL remove that category from the displayed Checklist.
 
 ### Requirement 5: Checklist Persistence
 
@@ -91,7 +106,38 @@ A web application that allows patients or caregivers to upload photos of hospita
 3. THE System SHALL provide a mechanism for the User to share the Checklist via a unique URL.
 4. WHEN a User accesses a shared Checklist URL, THE System SHALL display the Checklist in read-only mode.
 
-### Requirement 7: Security and Privacy
+### Requirement 7: User Authentication
+
+**User Story:** As a User, I want to log in to the application with a secure account, so that my medical checklist data is private and accessible only to me.
+
+#### Acceptance Criteria
+
+1. THE Auth_Service SHALL require a User to authenticate before accessing any feature that processes or displays PHI.
+2. WHEN a User provides valid credentials, THE Auth_Service SHALL issue a session token with an expiry of no more than 8 hours.
+3. WHEN a session token expires, THE Auth_Service SHALL redirect the User to the login page and invalidate the expired token.
+4. IF a User provides invalid credentials, THEN THE Auth_Service SHALL return a generic authentication failure message without revealing whether the username or password was incorrect.
+5. THE Auth_Service SHALL enforce a minimum password length of 12 characters, requiring at least one uppercase letter, one lowercase letter, one digit, and one special character.
+6. IF a User fails authentication 5 consecutive times within 15 minutes, THEN THE Auth_Service SHALL lock the account and notify the User via their registered email address.
+7. THE Auth_Service SHALL support multi-factor authentication using a time-based one-time password (TOTP).
+8. WHEN a User logs out, THE Auth_Service SHALL immediately invalidate the User's session token.
+
+### Requirement 8: HIPAA Compliance
+
+**User Story:** As a User, I want my protected health information handled in accordance with HIPAA, so that my medical data is protected by legally required safeguards.
+
+#### Acceptance Criteria
+
+1. THE System SHALL encrypt all PHI at rest using AES-256 encryption.
+2. THE System SHALL transmit all PHI exclusively over TLS 1.2 or higher.
+3. THE System SHALL record an Audit_Log entry for each of the following events: User login, User logout, image upload, Checklist generation, Checklist view, Checklist edit, Checklist deletion, and Checklist export.
+4. WHEN an Audit_Log entry is created, THE System SHALL record the User identifier, event type, timestamp, and source IP address.
+5. THE System SHALL retain Audit_Log entries for a minimum of 6 years in accordance with HIPAA retention requirements.
+6. THE System SHALL restrict each User's access to only the PHI associated with that User's account (minimum necessary access principle).
+7. THE System SHALL provide a mechanism for an administrator to export Audit_Log entries for compliance review.
+8. IF an unauthorized access attempt to PHI is detected, THEN THE System SHALL record the attempt in the Audit_Log and alert an administrator within 1 hour.
+9. THE System SHALL delete all PHI associated with a User's account within 30 days of an account deletion request.
+
+### Requirement 9: Security and Privacy
 
 **User Story:** As a User, I want my medical discharge information to be handled securely, so that my private health data is protected.
 
@@ -99,5 +145,5 @@ A web application that allows patients or caregivers to upload photos of hospita
 
 1. THE System SHALL transmit all uploaded images and extracted text over HTTPS.
 2. THE System SHALL delete uploaded images from temporary storage within 24 hours of processing.
-3. WHERE a User is authenticated, THE System SHALL restrict access to a User's saved Checklists to that User only.
+3. THE System SHALL restrict access to a User's saved Checklists to that authenticated User only.
 4. THE System SHALL not store raw extracted text beyond the duration of the active processing session.
