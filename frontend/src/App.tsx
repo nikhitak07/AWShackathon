@@ -70,33 +70,10 @@ const App: React.FC = () => {
   if (appState === "login") {
     return (
       <Login
-        onLogin={async (token, user) => {
-          const uid = getUserId(token);
+        onLogin={(token, user) => {
           setAccessToken(token);
           setUsername(user);
-          setUserId(uid);
-
-          // Try to load the most recent checklist
-          try {
-            const res = await fetch(`${API_BASE}/checklists?userId=${encodeURIComponent(uid)}`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            if (res.ok) {
-              const data = await res.json() as Checklist[];
-              if (data.length > 0) {
-                const latest = data.sort(
-                  (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                )[0];
-                setChecklist(applyDailyReset(latest));
-                setAppState("checklist");
-                setTab("checklist");
-                return;
-              }
-            }
-          } catch {
-            // fall through to upload
-          }
-
+          setUserId(getUserId(token));
           setAppState("upload");
         }}
       />

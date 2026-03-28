@@ -31,6 +31,8 @@ export interface Checklist {
   /** UUID */
   id: string;
   userId: string;
+  /** Optional user-defined name for the document */
+  name?: string;
   /** ISO 8601 */
   createdAt: string;
   /** ISO 8601 */

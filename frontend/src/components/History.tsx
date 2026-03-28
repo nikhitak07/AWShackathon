@@ -124,7 +124,7 @@ export const History: React.FC<Props> = ({ accessToken, userId, onOpen }) => {
           return (
             <div key={cl.id} style={s.card}>
               <div style={s.cardTop}>
-                <span style={s.date}>{date}</span>
+                <span style={s.date}>{cl.name ?? date}</span>
                 <span style={{ ...s.pct, color: pct === 100 ? "#34c759" : pct > 50 ? "#007AFF" : "#ff9500" }}>
                   {pct}%
                 </span>
@@ -132,7 +132,7 @@ export const History: React.FC<Props> = ({ accessToken, userId, onOpen }) => {
               <div style={s.track}>
                 <div style={{ ...s.fill, width: `${pct}%`, background: pct === 100 ? "#34c759" : "#007AFF" }} />
               </div>
-              <p style={s.sub}>{completed} of {total} items completed</p>
+              <p style={s.sub}>{cl.name ? `${date} · ` : ""}{completed} of {total} items completed</p>
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                 <button style={s.btnPrimary} onClick={() => setSelected(cl)}>View progress</button>
                 <button style={s.btnSecondary} onClick={() => onOpen(cl)}>Open checklist</button>
