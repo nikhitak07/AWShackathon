@@ -106,15 +106,15 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
 - [~] 8. Checkpoint — Core pipeline (Upload → Extract → Parse)
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 9. Checklist persistence — DynamoDB CRUD
-  - [~] 9.1 Implement Lambda handlers for save, get, update, and delete checklist operations against the `checklists` DynamoDB table
+- [x] 9. Checklist persistence — DynamoDB CRUD
+  - [x] 9.1 Implement Lambda handlers for save, get, update, and delete checklist operations against the `checklists` DynamoDB table
     - Use `USER#{userId}` / `CHECKLIST#{checklistId}` key schema
     - Set 30-day TTL on checklist items
     - Enforce per-user access: Lambda must verify `userId` from JWT matches `pk` before any read/write
     - _Requirements: 5.1, 5.2, 5.4, 8.6, 9.3_
-  - [~] 9.2 Surface storage-unavailable error in the UI when DynamoDB write fails
+  - [x] 9.2 Surface storage-unavailable error in the UI when DynamoDB write fails
     - _Requirements: 5.3_
-  - [ ]* 9.3 Write unit tests for checklist persistence
+  - [x]* 9.3 Write unit tests for checklist persistence
     - Test that a checklist saved by user A cannot be retrieved by user B
     - Test 30-day TTL is set correctly on save
     - Test storage-unavailable error path
@@ -144,17 +144,6 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - Test Category_Icons render at ≥24×24 px
     - _Requirements: 4.3, 4.12, 11.3, 10.5_
 
-- [ ] 11. Checklist export and sharing
-  - [~] 11.1 Implement PDF export Lambda — generate PDF from `Checklist` (all categories, items, completion status) and store in `discharge-exports` S3 bucket under per-user prefix; return pre-signed download URL
-    - Write `CHECKLIST_EXPORT` audit log entry on invocation
-    - _Requirements: 6.1, 6.2, 8.3_
-  - [~] 11.2 Implement share-URL Lambda — create a `SHARE#{shareToken}` DynamoDB item referencing the source checklist; return unique URL
-    - Shared checklist rendered in read-only mode (`readOnly: true` prop on `PrettyPrinter`)
-    - _Requirements: 6.3, 6.4_
-  - [ ]* 11.3 Write unit tests for export and sharing
-    - Test PDF contains all items and completion status
-    - Test shared URL renders checklist in read-only mode
-    - _Requirements: 6.2, 6.4_
 
 - [ ] 12. AI_Assistant — Bedrock chat
   - [~] 12.1 Implement `askAssistant(req: AssistantRequest): Promise<AssistantResponse>` Lambda

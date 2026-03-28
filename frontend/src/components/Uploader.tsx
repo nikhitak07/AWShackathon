@@ -4,6 +4,7 @@ import { getMockChecklist } from "../utils/parser";
 
 const ACCEPTED = ["image/jpeg", "image/png", "application/pdf"];
 const MAX_MB = 10;
+const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
 interface Props {
   onChecklistReady: (checklist: Checklist) => void;
@@ -39,7 +40,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady }) => {
     setError("");
     try {
       // Step 1: get a pre-signed upload URL
-      const uploadRes = await fetch("/api/upload-url", {
+      const uploadRes = await fetch(`${API_BASE}/upload-url`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileName: file.name, contentType: file.type }),
@@ -56,7 +57,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady }) => {
       if (!putRes.ok) throw new Error("Failed to upload file.");
 
       // Step 3: call the Extractor Lambda
-      const extractRes = await fetch("/api/extract", {
+      const extractRes = await fetch(`${API_BASE}/extract`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uploadId, contentType: file.type }),
@@ -68,7 +69,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady }) => {
       const { rawText } = await extractRes.json();
 
       // Step 4: call the Parser Lambda
-      const parseRes = await fetch("/api/parse", {
+      const parseRes = await fetch(`${API_BASE}/parse`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rawText }),

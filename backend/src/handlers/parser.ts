@@ -127,3 +127,35 @@ export function parseChecklist(json: string): Checklist {
 
   return c;
 }
+
+// ---------------------------------------------------------------------------
+// Lambda handler
+// ---------------------------------------------------------------------------
+
+import type { APIGatewayProxyHandler } from "aws-lambda";
+
+export const parseHandler: APIGatewayProxyHandler = async (event) => {
+  let body: { rawText?: string; userId?: string };
+  try {
+    body = JSON.parse(event.body ?? "{}");
+  } catch {
+    return { statusCode: 400, body: JSON.stringify({ error: "Invalid request body." }) };
+  }
+
+  const { rawText, userId } = body;
+  if (!rawText || !userId) {
+    return { statusCode: 400, body: JSON.stringify({ error: "rawText and userId are required." }) };
+  }
+
+  try {
+    const checklist = parseText(rawText, userId);
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(checklist),
+    };
+  } catch (err) {
+    const message = err instanceof ParseError ? err.message : "Failed to generate checklist.";
+    return { statusCode: 422, body: JSON.stringify({ error: message }) };
+  }
+};

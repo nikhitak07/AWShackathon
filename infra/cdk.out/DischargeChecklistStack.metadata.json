@@ -1,0 +1,590 @@
+{
+  "/DischargeChecklistStack/ChecklistsTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "ChecklistsTable50D29D6E"
+      }
+    }
+  ],
+  "/DischargeChecklistStack/AuditLogTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "AuditLogTable8B03E3C8"
+      }
+    }
+  ],
+  "/DischargeChecklistStack/LockoutTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "LockoutTableC38292B6"
+      }
+    }
+  ],
+  "/DischargeChecklistStack/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/DischargeChecklistStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    }
+  ],
+  "/DischargeChecklistStack/CloudFrontUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CloudFrontUrl"
+    }
+  ],
+  "/DischargeChecklistStack/UserPoolId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolId"
+    }
+  ],
+  "/DischargeChecklistStack/UserPoolClientId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolClientId"
+    }
+  ],
+  "/DischargeChecklistStack/ImagesTempBucketName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImagesTempBucketName"
+    }
+  ],
+  "/DischargeChecklistStack/ExportsBucketName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsBucketName"
+    }
+  ],
+  "/DischargeChecklistStack/SpaBucketName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SpaBucketName"
+    }
+  ],
+  "/DischargeChecklistStack/ChecklistsTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChecklistsTableName"
+    }
+  ],
+  "/DischargeChecklistStack/AuditLogTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditLogTableName"
+    }
+  ],
+  "/DischargeChecklistStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/DischargeChecklistStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/DischargeChecklistStack/ChecklistsTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChecklistsTable50D29D6E"
+    }
+  ],
+  "/DischargeChecklistStack/AuditLogTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditLogTable8B03E3C8"
+    }
+  ],
+  "/DischargeChecklistStack/AuditLogDenyMutationPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditLogDenyMutationPolicyFD1BF98A"
+    }
+  ],
+  "/DischargeChecklistStack/LockoutTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LockoutTableC38292B6"
+    }
+  ],
+  "/DischargeChecklistStack/ImagesTempBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImagesTempBucket1FF6BEEA"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/DischargeChecklistStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+    }
+  ],
+  "/DischargeChecklistStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+    }
+  ],
+  "/DischargeChecklistStack/ExportsBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsBucket5A12738B"
+    }
+  ],
+  "/DischargeChecklistStack/SpaBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SpaBucket48E1059F"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/DischargeChecklistStack/LockoutEmailIdentity/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LockoutEmailIdentityD62E8EF3"
+    }
+  ],
+  "/DischargeChecklistStack/LockoutTriggerRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LockoutTriggerRole17F69238"
+    }
+  ],
+  "/DischargeChecklistStack/PreAuthLockoutTrigger/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PreAuthLockoutTriggerFD5D236A"
+    }
+  ],
+  "/DischargeChecklistStack/PostAuthLockoutTrigger/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PostAuthLockoutTrigger531A932F"
+    }
+  ],
+  "/DischargeChecklistStack/UserPool/PreAuthenticationCognito": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolPreAuthenticationCognito368E0410"
+    }
+  ],
+  "/DischargeChecklistStack/UserPool/PostAuthenticationCognito": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolPostAuthenticationCognito62FAB912"
+    }
+  ],
+  "/DischargeChecklistStack/UserPool/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPool6BA7E5F2"
+    }
+  ],
+  "/DischargeChecklistStack/ApiLambdaRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiLambdaRole66D0B4CD"
+    }
+  ],
+  "/DischargeChecklistStack/UploadFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UploadFnEA455C04"
+    }
+  ],
+  "/DischargeChecklistStack/ExtractFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExtractFnCC855AF8"
+    }
+  ],
+  "/DischargeChecklistStack/ParseFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ParseFn3084119B"
+    }
+  ],
+  "/DischargeChecklistStack/ChecklistSaveFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChecklistSaveFnE00A557C"
+    }
+  ],
+  "/DischargeChecklistStack/ChecklistGetFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChecklistGetFnAD4946AD"
+    }
+  ],
+  "/DischargeChecklistStack/ChecklistUpdateFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChecklistUpdateFn04AD52A5"
+    }
+  ],
+  "/DischargeChecklistStack/ChecklistDeleteFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChecklistDeleteFn11155F54"
+    }
+  ],
+  "/DischargeChecklistStack/ChecklistListFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChecklistListFn3288B2EE"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApi9CB87AB9"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Account": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiAccountBE61E44B"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Endpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiEndpoint6C0300D0"
+    }
+  ],
+  "/DischargeChecklistStack/JwtAuthorizer/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "JwtAuthorizer08CECD9F"
+    }
+  ],
+  "/DischargeChecklistStack/SpaDistribution/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SpaDistributionD69C39B0"
+    }
+  ],
+  "/DischargeChecklistStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/DischargeChecklistStack/ImagesTempBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImagesTempBucketPolicy63CB4A73"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/DischargeChecklistStack/ImagesTempBucket/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ImagesTempBucketAutoDeleteObjectsCustomResource03F549FD"
+    }
+  ],
+  "/DischargeChecklistStack/ExportsBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsBucketPolicyF65C412E"
+    }
+  ],
+  "/DischargeChecklistStack/SpaBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SpaBucketPolicy77D96634"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/DischargeChecklistStack/SpaBucket/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SpaBucketAutoDeleteObjectsCustomResourceDCF3398A"
+    }
+  ],
+  "/DischargeChecklistStack/LockoutTriggerRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LockoutTriggerRoleDefaultPolicyC76E467F"
+    }
+  ],
+  "/DischargeChecklistStack/UserPool/WebClient/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolWebClient4C9370B0"
+    }
+  ],
+  "/DischargeChecklistStack/ApiLambdaRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiLambdaRoleDefaultPolicy84E47AF4"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/CloudWatchRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiCloudWatchRole04DF8591"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Deployment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiDeploymentD260D90B82f9e6be5d51cc077a47f6c7aef9afc2"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/DeploymentStage.prod/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiDeploymentStageprod53A1C566"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiOPTIONS89DF7EB6"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiuploadurlC0AE63EF"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/extract/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiextract2C3DCC49"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/parse/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiparse0DB7761A"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklists89B5A82C"
+    }
+  ],
+  "/DischargeChecklistStack/SpaDistribution/Origin1/S3OriginAccessControl/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SpaDistributionOrigin1S3OriginAccessControlBF48957F"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiuploadurlOPTIONS7796B8BE"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..upload-url": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiuploadurlPOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTuploadurlA04943B6"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..upload-url": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiuploadurlPOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTuploadurl31BB12F3"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiuploadurlPOSTEE19A1F1"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/extract/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiextractOPTIONSD4822ED4"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/extract/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..extract": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiextractPOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTextractE5DCDB4B"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/extract/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..extract": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiextractPOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTextract8F154F70"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/extract/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiextractPOSTDE8C6B58"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/parse/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiparseOPTIONS691DAA08"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/parse/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..parse": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiparsePOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTparse0C364F59"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/parse/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..parse": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiparsePOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTparseF548F2D1"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/parse/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiparsePOST80651AE0"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistsOPTIONS7D794BF0"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..checklists": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistsPOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTchecklists49D6673F"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..checklists": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistsPOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTchecklistsA666529F"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistsPOSTC57D2FF0"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/GET/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.GET..checklists": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistsGETApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167GETchecklists27208880"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/GET/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.GET..checklists": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistsGETApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167GETchecklists572E130C"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistsGET5AA0C488"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistId81820F5A"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdOPTIONS5D678EEB"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/GET/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.GET..checklists.{checklistId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdGETApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167GETchecklistschecklistId40D102F6"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/GET/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.GET..checklists.{checklistId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdGETApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167GETchecklistschecklistId325390B9"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/GET/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdGETF56A585F"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/PUT/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.PUT..checklists.{checklistId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdPUTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167PUTchecklistschecklistId52B54D1C"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/PUT/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.PUT..checklists.{checklistId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdPUTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167PUTchecklistschecklistId645576AA"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/PUT/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdPUT27B2F449"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/DELETE/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.DELETE..checklists.{checklistId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdDELETEApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167DELETEchecklistschecklistIdCE422B13"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/DELETE/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.DELETE..checklists.{checklistId}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdDELETEApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167DELETEchecklistschecklistId1DAF95C4"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/DELETE/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApichecklistschecklistIdDELETE353D2C3D"
+    }
+  ]
+}

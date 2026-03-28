@@ -1,0 +1,3268 @@
+{
+ "Resources": {
+  "ChecklistsTable50D29D6E": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "pk",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "sk",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "pk",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "sk",
+      "KeyType": "RANGE"
+     }
+    ],
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "checklists",
+    "TimeToLiveSpecification": {
+     "AttributeName": "ttl",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ChecklistsTable/Resource"
+   }
+  },
+  "AuditLogTable8B03E3C8": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "pk",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "sk",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "pk",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "sk",
+      "KeyType": "RANGE"
+     }
+    ],
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "audit_log"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/AuditLogTable/Resource"
+   }
+  },
+  "AuditLogDenyMutationPolicyFD1BF98A": {
+   "Type": "AWS::IAM::ManagedPolicy",
+   "Properties": {
+    "Description": "",
+    "ManagedPolicyName": "DenyAuditLogMutation",
+    "Path": "/",
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Deny",
+       "Resource": {
+        "Fn::GetAtt": [
+         "AuditLogTable8B03E3C8",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/AuditLogDenyMutationPolicy/Resource"
+   }
+  },
+  "LockoutTableC38292B6": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "pk",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "pk",
+      "KeyType": "HASH"
+     }
+    ],
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "auth_lockout",
+    "TimeToLiveSpecification": {
+     "AttributeName": "ttl",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/LockoutTable/Resource"
+   }
+  },
+  "ImagesTempBucket1FF6BEEA": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": {
+     "Fn::Join": [
+      "",
+      [
+       "discharge-images-temp-",
+       {
+        "Ref": "AWS::AccountId"
+       }
+      ]
+     ]
+    },
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "ExpirationInDays": 1,
+       "Id": "delete-after-24h",
+       "Status": "Enabled"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ImagesTempBucket/Resource"
+   }
+  },
+  "ImagesTempBucketPolicy63CB4A73": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "ImagesTempBucket1FF6BEEA"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ImagesTempBucket1FF6BEEA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ImagesTempBucket1FF6BEEA",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:PutBucketPolicy",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ImagesTempBucket1FF6BEEA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ImagesTempBucket1FF6BEEA",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ImagesTempBucket/Policy/Resource"
+   }
+  },
+  "ImagesTempBucketAutoDeleteObjectsCustomResource03F549FD": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "ImagesTempBucket1FF6BEEA"
+    }
+   },
+   "DependsOn": [
+    "ImagesTempBucketPolicy63CB4A73"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ImagesTempBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Lambda function for auto-deleting objects in ",
+       {
+        "Ref": "ImagesTempBucket1FF6BEEA"
+       },
+       " S3 bucket."
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+    "aws:asset:property": "Code"
+   }
+  },
+  "ExportsBucket5A12738B": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": {
+     "Fn::Join": [
+      "",
+      [
+       "discharge-exports-",
+       {
+        "Ref": "AWS::AccountId"
+       }
+      ]
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ExportsBucket/Resource"
+   }
+  },
+  "ExportsBucketPolicyF65C412E": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "ExportsBucket5A12738B"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ExportsBucket5A12738B",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ExportsBucket5A12738B",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ExportsBucket/Policy/Resource"
+   }
+  },
+  "SpaBucket48E1059F": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": {
+     "Fn::Join": [
+      "",
+      [
+       "discharge-checklist-spa-",
+       {
+        "Ref": "AWS::AccountId"
+       }
+      ]
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/SpaBucket/Resource"
+   }
+  },
+  "SpaBucketPolicy77D96634": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "SpaBucket48E1059F"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SpaBucket48E1059F",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SpaBucket48E1059F",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:PutBucketPolicy",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SpaBucket48E1059F",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SpaBucket48E1059F",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "s3:GetObject",
+       "Condition": {
+        "StringEquals": {
+         "AWS:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:",
+            {
+             "Ref": "AWS::Partition"
+            },
+            ":cloudfront::",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":distribution/",
+            {
+             "Ref": "SpaDistributionD69C39B0"
+            }
+           ]
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "SpaBucket48E1059F",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/SpaBucket/Policy/Resource"
+   }
+  },
+  "SpaBucketAutoDeleteObjectsCustomResourceDCF3398A": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "SpaBucket48E1059F"
+    }
+   },
+   "DependsOn": [
+    "SpaBucketPolicy77D96634"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/SpaBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "LockoutEmailIdentityD62E8EF3": {
+   "Type": "AWS::SES::EmailIdentity",
+   "Properties": {
+    "EmailIdentity": "no-reply@example.com"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/LockoutEmailIdentity/Resource"
+   }
+  },
+  "LockoutTriggerRole17F69238": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/LockoutTriggerRole/Resource"
+   }
+  },
+  "LockoutTriggerRoleDefaultPolicyC76E467F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "LockoutTableC38292B6",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "LockoutTableC38292B6",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LockoutTriggerRoleDefaultPolicyC76E467F",
+    "Roles": [
+     {
+      "Ref": "LockoutTriggerRole17F69238"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/LockoutTriggerRole/DefaultPolicy/Resource"
+   }
+  },
+  "PreAuthLockoutTriggerFD5D236A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "LOCKOUT_TABLE_NAME": {
+       "Ref": "LockoutTableC38292B6"
+      },
+      "SES_FROM_ADDRESS": "no-reply@example.com"
+     }
+    },
+    "FunctionName": "discharge-checklist-pre-auth-lockout",
+    "Handler": "auth/lockoutTriggers.preAuthHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "LockoutTriggerRole17F69238",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "LockoutTriggerRoleDefaultPolicyC76E467F",
+    "LockoutTriggerRole17F69238"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/PreAuthLockoutTrigger/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "PostAuthLockoutTrigger531A932F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "LOCKOUT_TABLE_NAME": {
+       "Ref": "LockoutTableC38292B6"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-post-auth-lockout",
+    "Handler": "auth/lockoutTriggers.postAuthHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "LockoutTriggerRole17F69238",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "LockoutTriggerRoleDefaultPolicyC76E467F",
+    "LockoutTriggerRole17F69238"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/PostAuthLockoutTrigger/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "UserPoolPreAuthenticationCognito368E0410": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "PreAuthLockoutTriggerFD5D236A",
+      "Arn"
+     ]
+    },
+    "Principal": "cognito-idp.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "UserPool6BA7E5F2",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/UserPool/PreAuthenticationCognito"
+   }
+  },
+  "UserPoolPostAuthenticationCognito62FAB912": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "PostAuthLockoutTrigger531A932F",
+      "Arn"
+     ]
+    },
+    "Principal": "cognito-idp.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "UserPool6BA7E5F2",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/UserPool/PostAuthenticationCognito"
+   }
+  },
+  "UserPool6BA7E5F2": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AliasAttributes": [
+     "email"
+    ],
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "EnabledMfas": [
+     "SOFTWARE_TOKEN_MFA"
+    ],
+    "LambdaConfig": {
+     "PostAuthentication": {
+      "Fn::GetAtt": [
+       "PostAuthLockoutTrigger531A932F",
+       "Arn"
+      ]
+     },
+     "PreAuthentication": {
+      "Fn::GetAtt": [
+       "PreAuthLockoutTriggerFD5D236A",
+       "Arn"
+      ]
+     }
+    },
+    "MfaConfiguration": "ON",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 12,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": true,
+      "RequireUppercase": true
+     }
+    },
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "discharge-checklist-users",
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/UserPool/Resource"
+   }
+  },
+  "UserPoolWebClient4C9370B0": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AccessTokenValidity": 480,
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ClientName": "discharge-checklist-web",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "IdTokenValidity": 480,
+    "PreventUserExistenceErrors": "ENABLED",
+    "RefreshTokenValidity": 43200,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "TokenValidityUnits": {
+     "AccessToken": "minutes",
+     "IdToken": "minutes",
+     "RefreshToken": "minutes"
+    },
+    "UserPoolId": {
+     "Ref": "UserPool6BA7E5F2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/UserPool/WebClient/Resource"
+   }
+  },
+  "ApiLambdaRole66D0B4CD": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ApiLambdaRole/Resource"
+   }
+  },
+  "ApiLambdaRoleDefaultPolicy84E47AF4": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ChecklistsTable50D29D6E",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ChecklistsTable50D29D6E",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AuditLogTable8B03E3C8",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ImagesTempBucket1FF6BEEA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ImagesTempBucket1FF6BEEA",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ExportsBucket5A12738B",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ExportsBucket5A12738B",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "textract:DetectDocumentText",
+        "textract:AnalyzeDocument"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Deny",
+       "Resource": {
+        "Fn::GetAtt": [
+         "AuditLogTable8B03E3C8",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "Roles": [
+     {
+      "Ref": "ApiLambdaRole66D0B4CD"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ApiLambdaRole/DefaultPolicy/Resource"
+   }
+  },
+  "UploadFnEA455C04": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "IMAGES_BUCKET": {
+       "Ref": "ImagesTempBucket1FF6BEEA"
+      },
+      "EXPORTS_BUCKET": {
+       "Ref": "ExportsBucket5A12738B"
+      },
+      "CHECKLISTS_TABLE": {
+       "Ref": "ChecklistsTable50D29D6E"
+      },
+      "AUDIT_LOG_TABLE": {
+       "Ref": "AuditLogTable8B03E3C8"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-upload",
+    "Handler": "handlers/uploader.uploadHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiLambdaRole66D0B4CD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "ApiLambdaRole66D0B4CD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/UploadFn/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ExtractFnCC855AF8": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "IMAGES_BUCKET": {
+       "Ref": "ImagesTempBucket1FF6BEEA"
+      },
+      "EXPORTS_BUCKET": {
+       "Ref": "ExportsBucket5A12738B"
+      },
+      "CHECKLISTS_TABLE": {
+       "Ref": "ChecklistsTable50D29D6E"
+      },
+      "AUDIT_LOG_TABLE": {
+       "Ref": "AuditLogTable8B03E3C8"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-extract",
+    "Handler": "handlers/extractor.extractHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiLambdaRole66D0B4CD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 35
+   },
+   "DependsOn": [
+    "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "ApiLambdaRole66D0B4CD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ExtractFn/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ParseFn3084119B": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "IMAGES_BUCKET": {
+       "Ref": "ImagesTempBucket1FF6BEEA"
+      },
+      "EXPORTS_BUCKET": {
+       "Ref": "ExportsBucket5A12738B"
+      },
+      "CHECKLISTS_TABLE": {
+       "Ref": "ChecklistsTable50D29D6E"
+      },
+      "AUDIT_LOG_TABLE": {
+       "Ref": "AuditLogTable8B03E3C8"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-parse",
+    "Handler": "handlers/parser.parseHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiLambdaRole66D0B4CD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "ApiLambdaRole66D0B4CD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ParseFn/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ChecklistSaveFnE00A557C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "IMAGES_BUCKET": {
+       "Ref": "ImagesTempBucket1FF6BEEA"
+      },
+      "EXPORTS_BUCKET": {
+       "Ref": "ExportsBucket5A12738B"
+      },
+      "CHECKLISTS_TABLE": {
+       "Ref": "ChecklistsTable50D29D6E"
+      },
+      "AUDIT_LOG_TABLE": {
+       "Ref": "AuditLogTable8B03E3C8"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-save",
+    "Handler": "handlers/checklist.saveHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiLambdaRole66D0B4CD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "ApiLambdaRole66D0B4CD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ChecklistSaveFn/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ChecklistGetFnAD4946AD": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "IMAGES_BUCKET": {
+       "Ref": "ImagesTempBucket1FF6BEEA"
+      },
+      "EXPORTS_BUCKET": {
+       "Ref": "ExportsBucket5A12738B"
+      },
+      "CHECKLISTS_TABLE": {
+       "Ref": "ChecklistsTable50D29D6E"
+      },
+      "AUDIT_LOG_TABLE": {
+       "Ref": "AuditLogTable8B03E3C8"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-get",
+    "Handler": "handlers/checklist.getHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiLambdaRole66D0B4CD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "ApiLambdaRole66D0B4CD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ChecklistGetFn/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ChecklistUpdateFn04AD52A5": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "IMAGES_BUCKET": {
+       "Ref": "ImagesTempBucket1FF6BEEA"
+      },
+      "EXPORTS_BUCKET": {
+       "Ref": "ExportsBucket5A12738B"
+      },
+      "CHECKLISTS_TABLE": {
+       "Ref": "ChecklistsTable50D29D6E"
+      },
+      "AUDIT_LOG_TABLE": {
+       "Ref": "AuditLogTable8B03E3C8"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-update",
+    "Handler": "handlers/checklist.updateHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiLambdaRole66D0B4CD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "ApiLambdaRole66D0B4CD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ChecklistUpdateFn/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ChecklistDeleteFn11155F54": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "IMAGES_BUCKET": {
+       "Ref": "ImagesTempBucket1FF6BEEA"
+      },
+      "EXPORTS_BUCKET": {
+       "Ref": "ExportsBucket5A12738B"
+      },
+      "CHECKLISTS_TABLE": {
+       "Ref": "ChecklistsTable50D29D6E"
+      },
+      "AUDIT_LOG_TABLE": {
+       "Ref": "AuditLogTable8B03E3C8"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-delete",
+    "Handler": "handlers/checklist.deleteHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiLambdaRole66D0B4CD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "ApiLambdaRole66D0B4CD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ChecklistDeleteFn/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ChecklistListFn3288B2EE": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "IMAGES_BUCKET": {
+       "Ref": "ImagesTempBucket1FF6BEEA"
+      },
+      "EXPORTS_BUCKET": {
+       "Ref": "ExportsBucket5A12738B"
+      },
+      "CHECKLISTS_TABLE": {
+       "Ref": "ChecklistsTable50D29D6E"
+      },
+      "AUDIT_LOG_TABLE": {
+       "Ref": "AuditLogTable8B03E3C8"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "FunctionName": "discharge-checklist-list",
+    "Handler": "handlers/checklist.listHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ApiLambdaRole66D0B4CD",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "ApiLambdaRoleDefaultPolicy84E47AF4",
+    "ApiLambdaRole66D0B4CD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/ChecklistListFn/Resource",
+    "aws:asset:path": "asset.cbcda0909d6d4cec2549e2d48bf8298cfef700bc2119868f7fe495d1b086aff3",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DischargeChecklistApi9CB87AB9": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "discharge-checklist-api",
+    "Policy": {
+     "Statement": [
+      {
+       "Action": "execute-api:Invoke",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":execute-api:us-east-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":",
+          {
+           "Ref": "DischargeChecklistApi9CB87AB9"
+          },
+          "/*/*/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Resource"
+   }
+  },
+  "DischargeChecklistApiCloudWatchRole04DF8591": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/CloudWatchRole/Resource"
+   }
+  },
+  "DischargeChecklistApiAccountBE61E44B": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "DischargeChecklistApiCloudWatchRole04DF8591",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "DischargeChecklistApi9CB87AB9"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Account"
+   }
+  },
+  "DischargeChecklistApiDeploymentD260D90B82f9e6be5d51cc077a47f6c7aef9afc2": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Automatically created by the RestApi construct",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "DependsOn": [
+    "DischargeChecklistApichecklistschecklistIdDELETE353D2C3D",
+    "DischargeChecklistApichecklistschecklistIdGETF56A585F",
+    "DischargeChecklistApichecklistschecklistIdOPTIONS5D678EEB",
+    "DischargeChecklistApichecklistschecklistIdPUT27B2F449",
+    "DischargeChecklistApichecklistschecklistId81820F5A",
+    "DischargeChecklistApichecklistsGET5AA0C488",
+    "DischargeChecklistApichecklistsOPTIONS7D794BF0",
+    "DischargeChecklistApichecklistsPOSTC57D2FF0",
+    "DischargeChecklistApichecklists89B5A82C",
+    "DischargeChecklistApiextractOPTIONSD4822ED4",
+    "DischargeChecklistApiextractPOSTDE8C6B58",
+    "DischargeChecklistApiextract2C3DCC49",
+    "DischargeChecklistApiOPTIONS89DF7EB6",
+    "DischargeChecklistApiparseOPTIONS691DAA08",
+    "DischargeChecklistApiparsePOST80651AE0",
+    "DischargeChecklistApiparse0DB7761A",
+    "DischargeChecklistApiuploadurlOPTIONS7796B8BE",
+    "DischargeChecklistApiuploadurlPOSTEE19A1F1",
+    "DischargeChecklistApiuploadurlC0AE63EF"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "DischargeChecklistApiDeploymentStageprod53A1C566": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "DischargeChecklistApiDeploymentD260D90B82f9e6be5d51cc077a47f6c7aef9afc2"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "DischargeChecklistApiAccountBE61E44B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "DischargeChecklistApiOPTIONS89DF7EB6": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "DischargeChecklistApi9CB87AB9",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/OPTIONS/Resource"
+   }
+  },
+  "DischargeChecklistApiuploadurlC0AE63EF": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "DischargeChecklistApi9CB87AB9",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "upload-url",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/Resource"
+   }
+  },
+  "DischargeChecklistApiuploadurlOPTIONS7796B8BE": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "DischargeChecklistApiuploadurlC0AE63EF"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/OPTIONS/Resource"
+   }
+  },
+  "DischargeChecklistApiuploadurlPOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTuploadurlA04943B6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "UploadFnEA455C04",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/",
+       {
+        "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+       },
+       "/POST/upload-url"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..upload-url"
+   }
+  },
+  "DischargeChecklistApiuploadurlPOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTuploadurl31BB12F3": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "UploadFnEA455C04",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/test-invoke-stage/POST/upload-url"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..upload-url"
+   }
+  },
+  "DischargeChecklistApiuploadurlPOSTEE19A1F1": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "JwtAuthorizer08CECD9F"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "UploadFnEA455C04",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "DischargeChecklistApiuploadurlC0AE63EF"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/upload-url/POST/Resource"
+   }
+  },
+  "DischargeChecklistApiextract2C3DCC49": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "DischargeChecklistApi9CB87AB9",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "extract",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/extract/Resource"
+   }
+  },
+  "DischargeChecklistApiextractOPTIONSD4822ED4": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "DischargeChecklistApiextract2C3DCC49"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/extract/OPTIONS/Resource"
+   }
+  },
+  "DischargeChecklistApiextractPOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTextractE5DCDB4B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ExtractFnCC855AF8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/",
+       {
+        "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+       },
+       "/POST/extract"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/extract/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..extract"
+   }
+  },
+  "DischargeChecklistApiextractPOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTextract8F154F70": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ExtractFnCC855AF8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/test-invoke-stage/POST/extract"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/extract/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..extract"
+   }
+  },
+  "DischargeChecklistApiextractPOSTDE8C6B58": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "JwtAuthorizer08CECD9F"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ExtractFnCC855AF8",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "DischargeChecklistApiextract2C3DCC49"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/extract/POST/Resource"
+   }
+  },
+  "DischargeChecklistApiparse0DB7761A": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "DischargeChecklistApi9CB87AB9",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "parse",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/parse/Resource"
+   }
+  },
+  "DischargeChecklistApiparseOPTIONS691DAA08": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "DischargeChecklistApiparse0DB7761A"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/parse/OPTIONS/Resource"
+   }
+  },
+  "DischargeChecklistApiparsePOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTparse0C364F59": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ParseFn3084119B",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/",
+       {
+        "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+       },
+       "/POST/parse"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/parse/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..parse"
+   }
+  },
+  "DischargeChecklistApiparsePOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTparseF548F2D1": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ParseFn3084119B",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/test-invoke-stage/POST/parse"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/parse/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..parse"
+   }
+  },
+  "DischargeChecklistApiparsePOST80651AE0": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "JwtAuthorizer08CECD9F"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ParseFn3084119B",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "DischargeChecklistApiparse0DB7761A"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/parse/POST/Resource"
+   }
+  },
+  "DischargeChecklistApichecklists89B5A82C": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "DischargeChecklistApi9CB87AB9",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "checklists",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/Resource"
+   }
+  },
+  "DischargeChecklistApichecklistsOPTIONS7D794BF0": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "DischargeChecklistApichecklists89B5A82C"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/OPTIONS/Resource"
+   }
+  },
+  "DischargeChecklistApichecklistsPOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTchecklists49D6673F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistSaveFnE00A557C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/",
+       {
+        "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+       },
+       "/POST/checklists"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..checklists"
+   }
+  },
+  "DischargeChecklistApichecklistsPOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTchecklistsA666529F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistSaveFnE00A557C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/test-invoke-stage/POST/checklists"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..checklists"
+   }
+  },
+  "DischargeChecklistApichecklistsPOSTC57D2FF0": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "JwtAuthorizer08CECD9F"
+    },
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ChecklistSaveFnE00A557C",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "DischargeChecklistApichecklists89B5A82C"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/POST/Resource"
+   }
+  },
+  "DischargeChecklistApichecklistsGETApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167GETchecklists27208880": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistListFn3288B2EE",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/",
+       {
+        "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+       },
+       "/GET/checklists"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/GET/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.GET..checklists"
+   }
+  },
+  "DischargeChecklistApichecklistsGETApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167GETchecklists572E130C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistListFn3288B2EE",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/test-invoke-stage/GET/checklists"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/GET/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.GET..checklists"
+   }
+  },
+  "DischargeChecklistApichecklistsGET5AA0C488": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "JwtAuthorizer08CECD9F"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ChecklistListFn3288B2EE",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "DischargeChecklistApichecklists89B5A82C"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/GET/Resource"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistId81820F5A": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "DischargeChecklistApichecklists89B5A82C"
+    },
+    "PathPart": "{checklistId}",
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/Resource"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdOPTIONS5D678EEB": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "DischargeChecklistApichecklistschecklistId81820F5A"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/OPTIONS/Resource"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdGETApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167GETchecklistschecklistId40D102F6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistGetFnAD4946AD",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/",
+       {
+        "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+       },
+       "/GET/checklists/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/GET/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.GET..checklists.{checklistId}"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdGETApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167GETchecklistschecklistId325390B9": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistGetFnAD4946AD",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/test-invoke-stage/GET/checklists/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/GET/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.GET..checklists.{checklistId}"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdGETF56A585F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "JwtAuthorizer08CECD9F"
+    },
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ChecklistGetFnAD4946AD",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "DischargeChecklistApichecklistschecklistId81820F5A"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/GET/Resource"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdPUTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167PUTchecklistschecklistId52B54D1C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistUpdateFn04AD52A5",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/",
+       {
+        "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+       },
+       "/PUT/checklists/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/PUT/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.PUT..checklists.{checklistId}"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdPUTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167PUTchecklistschecklistId645576AA": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistUpdateFn04AD52A5",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/test-invoke-stage/PUT/checklists/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/PUT/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.PUT..checklists.{checklistId}"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdPUT27B2F449": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "JwtAuthorizer08CECD9F"
+    },
+    "HttpMethod": "PUT",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ChecklistUpdateFn04AD52A5",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "DischargeChecklistApichecklistschecklistId81820F5A"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/PUT/Resource"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdDELETEApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167DELETEchecklistschecklistIdCE422B13": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistDeleteFn11155F54",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/",
+       {
+        "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+       },
+       "/DELETE/checklists/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/DELETE/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.DELETE..checklists.{checklistId}"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdDELETEApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167DELETEchecklistschecklistId1DAF95C4": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ChecklistDeleteFn11155F54",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "DischargeChecklistApi9CB87AB9"
+       },
+       "/test-invoke-stage/DELETE/checklists/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/DELETE/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.DELETE..checklists.{checklistId}"
+   }
+  },
+  "DischargeChecklistApichecklistschecklistIdDELETE353D2C3D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "JwtAuthorizer08CECD9F"
+    },
+    "HttpMethod": "DELETE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ChecklistDeleteFn11155F54",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "DischargeChecklistApichecklistschecklistId81820F5A"
+    },
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/DischargeChecklistApi/Default/checklists/{checklistId}/DELETE/Resource"
+   }
+  },
+  "JwtAuthorizer08CECD9F": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "IdentitySource": "method.request.header.Authorization",
+    "Name": "CognitoAuthorizer",
+    "ProviderARNs": [
+     {
+      "Fn::GetAtt": [
+       "UserPool6BA7E5F2",
+       "Arn"
+      ]
+     }
+    ],
+    "RestApiId": {
+     "Ref": "DischargeChecklistApi9CB87AB9"
+    },
+    "Type": "COGNITO_USER_POOLS"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/JwtAuthorizer/Resource"
+   }
+  },
+  "SpaDistributionOrigin1S3OriginAccessControlBF48957F": {
+   "Type": "AWS::CloudFront::OriginAccessControl",
+   "Properties": {
+    "OriginAccessControlConfig": {
+     "Name": "DischargeChecklistStackSpaDiOrigin1S3OriginAccessControl5FA61186",
+     "OriginAccessControlOriginType": "s3",
+     "SigningBehavior": "always",
+     "SigningProtocol": "sigv4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/SpaDistribution/Origin1/S3OriginAccessControl/Resource"
+   }
+  },
+  "SpaDistributionD69C39B0": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "CustomErrorResponses": [
+      {
+       "ErrorCode": 404,
+       "ResponseCode": 200,
+       "ResponsePagePath": "/index.html"
+      }
+     ],
+     "DefaultCacheBehavior": {
+      "AllowedMethods": [
+       "GET",
+       "HEAD"
+      ],
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true,
+      "TargetOriginId": "DischargeChecklistStackSpaDistributionOrigin1BF6F01AC",
+      "ViewerProtocolPolicy": "redirect-to-https"
+     },
+     "DefaultRootObject": "index.html",
+     "Enabled": true,
+     "HttpVersion": "http2",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "DomainName": {
+        "Fn::GetAtt": [
+         "SpaBucket48E1059F",
+         "RegionalDomainName"
+        ]
+       },
+       "Id": "DischargeChecklistStackSpaDistributionOrigin1BF6F01AC",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "SpaDistributionOrigin1S3OriginAccessControlBF48957F",
+         "Id"
+        ]
+       },
+       "S3OriginConfig": {
+        "OriginAccessIdentity": ""
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/SpaDistribution/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/6VSwW4aMRD9lnA2bgP00huBVuohCoL2VFWR155sBnY9yDMOpdb+e7U2hEVtD1FP82aen/1mPBM9mX3Q72/MgcfW7cYNVjptxNidMgd+TO7oTUuu0umrqRpQiyefQafQtDrdG29qcCtq0B578rqwpiLJ8XKooE7xVKe7aHcgfbWg72nU4k/0o4+joafeDE91pliXo/MotIQGBB6qLVjhUaf+S/1DFeridJi/wVkRbMQItODfaOxP8dnXnWHoFAPr9Kk12Hxx4AUlO70qdKoxbeWMTp+jt4Lk+yNDvILQIjOS77/h0TCDsJ73QVmqPQrp9I0hrIiaXvCKz2DRIHgZUqXSKbPH2ggczFGnNbDM95iX4ALn1lL0opawb+jYnu4ZZBsxdd6cAtbAFIOFfgDqHuSZXF62gs7s6ZETLk2cvfE8yjMF/AUhG3jNOmUbiu4pkBedlsgSsIp5TJvpQ8Aae7fAvCAvocziH+WhuOsGtiILtX93eUWtAr2gg5DbzH/Rt4++zo9G2UfplCcHesvvXiYzfTvTtzdbRhyH6AVb0OsSfwObL8yQ1wMAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "DischargeChecklistApiEndpoint6C0300D0": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "DischargeChecklistApi9CB87AB9"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "API Gateway URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "DischargeChecklistApi9CB87AB9"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "DischargeChecklistApiDeploymentStageprod53A1C566"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "CloudFrontUrl": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Fn::GetAtt": [
+        "SpaDistributionD69C39B0",
+        "DomainName"
+       ]
+      }
+     ]
+    ]
+   }
+  },
+  "UserPoolId": {
+   "Value": {
+    "Ref": "UserPool6BA7E5F2"
+   }
+  },
+  "UserPoolClientId": {
+   "Value": {
+    "Ref": "UserPoolWebClient4C9370B0"
+   }
+  },
+  "ImagesTempBucketName": {
+   "Value": {
+    "Ref": "ImagesTempBucket1FF6BEEA"
+   }
+  },
+  "ExportsBucketName": {
+   "Value": {
+    "Ref": "ExportsBucket5A12738B"
+   }
+  },
+  "SpaBucketName": {
+   "Value": {
+    "Ref": "SpaBucket48E1059F"
+   }
+  },
+  "ChecklistsTableName": {
+   "Value": {
+    "Ref": "ChecklistsTable50D29D6E"
+   }
+  },
+  "AuditLogTableName": {
+   "Value": {
+    "Ref": "AuditLogTable8B03E3C8"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
