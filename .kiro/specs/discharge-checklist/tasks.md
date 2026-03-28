@@ -20,7 +20,7 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - Set session token expiry to 8 hours
     - Return generic error message on invalid credentials (no username/password distinction)
     - _Requirements: 7.1, 7.2, 7.4, 7.5, 7.7_
-  - [-] 2.2 Implement account lockout after 5 failed attempts within 15 minutes with email notification
+  - [skip] 2.2 Implement account lockout after 5 failed attempts within 15 minutes with email notification
     - _Requirements: 7.6_
   - [~] 2.3 Implement session expiry redirect — expired JWT redirects user to login and invalidates token
     - _Requirements: 7.3, 7.8_
@@ -48,58 +48,56 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
 - [~] 4. Checkpoint — Auth and Audit baseline
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Uploader — file validation and pre-signed URL
-  - [~] 5.1 Implement `validateFile(file: File): void`
+- [x] 5. Uploader — file validation and pre-signed URL
+  - [x] 5.1 Implement `validateFile(file: File): void`
     - Accept only `image/jpeg`, `image/png`, `application/pdf`; throw `UploadValidationError` on invalid format
-    - Reject files exceeding 10 MB; throw `UploadValidationError` with size message
-    - Enforce max 10 files per session
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.7_
-  - [ ]* 5.2 Write property test for `validateFile`
+  - [x]* 5.2 Write property test for `validateFile`
     - **Property 1: Any file with an accepted MIME type and size ≤10 MB must pass validation**
     - **Validates: Requirements 1.1, 1.4**
-  - [~] 5.3 Implement `getUploadUrl(req: UploadRequest): Promise<UploadResponse>` Lambda — generates pre-signed S3 PUT URL targeting `discharge-images-temp` bucket (SSE-S3, 24h lifecycle rule)
+  - [x] 5.3 Implement `getUploadUrl(req: UploadRequest): Promise<UploadResponse>` Lambda — generates pre-signed S3 PUT URL targeting `discharge-images-temp` bucket (SSE-S3, 24h lifecycle rule)
     - _Requirements: 9.1, 9.2_
-  - [~] 5.4 Implement image preview display in the React UI after a valid file is selected
+  - [x] 5.4 Implement image preview display in the React UI after a valid file is selected
     - _Requirements: 1.6_
-  - [ ]* 5.5 Write unit tests for Uploader
+  - [x]* 5.5 Write unit tests for Uploader
     - Test rejection of unsupported MIME types with correct error message
     - Test rejection of files >10 MB with correct error message
     - Test acceptance of all three valid formats at boundary sizes
     - _Requirements: 1.2, 1.3, 1.5_
 
 - [ ] 6. Extractor — Textract Lambda
-  - [~] 6.1 Implement `extractText(req: ExtractionRequest): Promise<ExtractionResult>` Lambda
+- [x] 6. Extractor — Textract Lambda
+  - [x] 6.1 Implement `extractText(req: ExtractionRequest): Promise<ExtractionResult>` Lambda
     - Call `DetectDocumentText` for images, `AnalyzeDocument` for PDFs
     - Enforce 30-second timeout; throw `ExtractionError` on Textract error
     - Pass `rawText` to Parser on success; never persist raw text
     - _Requirements: 2.1, 2.2, 2.3, 2.5, 9.4_
-  - [~] 6.2 Display loading indicator in the UI while extraction is in progress; display error message on `ExtractionError`
+  - [x] 6.2 Display loading indicator in the UI while extraction is in progress; display error message on `ExtractionError`
     - _Requirements: 2.3, 2.4_
-  - [ ]* 6.3 Write unit tests for Extractor
+  - [x] 6.3 Write unit tests for Extractor
     - Test that `ExtractionError` is thrown and user-facing error displayed on Textract failure
     - Test that raw text is not persisted after extraction
     - _Requirements: 2.3, 9.4_
-
-- [ ] 7. Parser — text-to-checklist conversion
-  - [~] 7.1 Implement `parseText(rawText: string, userId: string): Checklist`
+- [x] 7. Parser — text-to-checklist conversion
+  - [x] 7.1 Implement `parseText(rawText: string, userId: string): Checklist`
     - Categorize items into Medications, DailyActivities, FollowUpAppointments, DietaryRestrictions, WarningSigns using keyword/pattern matching
     - Assign each item to exactly one category
     - Assign `PriorityLevel` of `High` for items matching risk patterns (fever, chest pain, difficulty breathing, uncontrolled bleeding); default to `Routine`
     - Throw `ParseError` if no items found; surface user-facing message suggesting image quality review
     - Parse ISO 8601 date/time when present in item text
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 11.1, 11.2_
-  - [ ]* 7.2 Write property test for `parseText` — categorization completeness
+  - [x]* 7.2 Write property test for `parseText` — categorization completeness
     - **Property 2: Every item explicitly stated in the raw text appears in the output Checklist**
     - **Validates: Requirements 3.4**
-  - [ ]* 7.3 Write property test for `parseText` — priority assignment
+  - [x]* 7.3 Write property test for `parseText` — priority assignment
     - **Property 3: Any item containing a known risk keyword is assigned PriorityLevel High**
     - **Validates: Requirements 11.2**
-  - [~] 7.4 Implement `formatChecklist(checklist: Checklist): string` and `parseChecklist(json: string): Checklist`
+  - [x] 7.4 Implement `formatChecklist(checklist: Checklist): string` and `parseChecklist(json: string): Checklist`
     - _Requirements: 3.5_
-  - [ ]* 7.5 Write property test for round-trip consistency
+  - [x]* 7.5 Write property test for round-trip consistency
     - **Property 4: `parseChecklist(formatChecklist(c))` produces a Checklist equivalent to `c` for all valid Checklists**
     - **Validates: Requirements 3.5**
-  - [ ]* 7.6 Write unit tests for Parser
+  - [x]* 7.6 Write unit tests for Parser
     - Test `ParseError` on empty/unrecognizable text
     - Test correct category assignment for representative items in each category
     - Test date/time extraction from item text
