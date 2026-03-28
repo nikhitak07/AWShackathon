@@ -154,44 +154,11 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
         </div>
       </nav>
 
-      <div style={{ display: "flex", gap: 24, maxWidth: 1280, margin: "0 auto", padding: "32px 32px 48px", alignItems: "flex-start" }}>
+      <div style={{ display: "flex", gap: 24, width: "100%", padding: "28px 40px 48px", alignItems: "flex-start", boxSizing: "border-box" }}>
         {/* Left: checklist */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ margin: "0 0 2px", fontSize: 15, color: tokens.textMuted, fontWeight: 500 }}>{greeting}</p>
-          <h1 style={{ margin: "0 0 20px", fontSize: 28, fontWeight: 700, color: tokens.textPrimary, letterSpacing: "-0.5px" }}>Your Discharge Checklist</h1>
-
-          {/* Counters */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12, marginBottom: 16 }}>
-            <div style={{ background: tokens.cardBg, border: `1px solid ${tokens.border}`, borderRadius: 14, padding: "14px 16px" }}>
-              <p style={{ margin: "0 0 4px", fontSize: 12, color: tokens.textMuted, fontWeight: 500 }}>Checklist resets in</p>
-              <p style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#007AFF", letterSpacing: "-0.5px" }}>{resetCountdown}</p>
-            </div>
-          </div>
-
-          {/* Completion Calendar */}
-          {calDays.length > 0 && (
-            <div style={{ background: tokens.cardBg, border: `1px solid ${tokens.border}`, borderRadius: 14, padding: "14px 16px", marginBottom: 16 }}>
-              <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: tokens.textPrimary }}>Recovery Calendar</p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {calDays.map((day) => {
-                  const ds = day.toISOString().slice(0, 10);
-                  const isToday = ds === todayKey;
-                  const done = (log[ds] ?? 0) > 0;
-                  return (
-                    <div key={ds} title={day.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} style={{ width: 32, height: 32, borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: done ? "#34c759" : isToday ? "rgba(0,122,255,0.12)" : isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", border: isToday ? "2px solid #007AFF" : "2px solid transparent", cursor: "default" }}>
-                      <span style={{ fontSize: 11, fontWeight: isToday ? 700 : 400, color: done ? "#fff" : isToday ? "#007AFF" : tokens.textMuted, lineHeight: 1 }}>{day.getDate()}</span>
-                      {done && <span style={{ fontSize: 7, color: "rgba(255,255,255,0.8)", lineHeight: 1 }}>✓</span>}
-                    </div>
-                  );
-                })}
-              </div>
-              <div style={{ display: "flex", gap: 14, marginTop: 10, fontSize: 11, color: tokens.textMuted }}>
-                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: "#34c759", marginRight: 4 }} />Completed</span>
-                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, border: "2px solid #007AFF", marginRight: 4 }} />Today</span>
-                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", marginRight: 4 }} />Pending</span>
-              </div>
-            </div>
-          )}
+          <h1 style={{ margin: "0 0 20px", fontSize: 28, fontWeight: 700, color: tokens.textPrimary, letterSpacing: "-0.5px" }}>Your Recovery Checklist</h1>
           {warningSigns.length > 0 && (
             <div style={{ background: isDark ? "rgba(255,149,0,0.12)" : "#fff8ed", border: "1.5px solid rgba(255,149,0,0.4)", borderRadius: 14, padding: "14px 18px", marginBottom: 14 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
@@ -348,8 +315,39 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
           })}
         </div>
 
-        {/* Right: AI Assistant */}
-        <div style={{ width: 360, flexShrink: 0, position: "sticky", top: 80 }}>
+        {/* Right: timer, calendar, AI Assistant */}
+        <div style={{ width: 340, flexShrink: 0, position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
+          {/* Reset countdown */}
+          <div style={{ background: tokens.cardBg, border: `1px solid ${tokens.border}`, borderRadius: 14, padding: "16px 18px" }}>
+            <p style={{ margin: "0 0 4px", fontSize: 12, color: tokens.textMuted, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.5px" }}>Checklist resets in</p>
+            <p style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#007AFF", letterSpacing: "-1px" }}>{resetCountdown}</p>
+          </div>
+
+          {/* Recovery Calendar */}
+          {calDays.length > 0 && (
+            <div style={{ background: tokens.cardBg, border: `1px solid ${tokens.border}`, borderRadius: 14, padding: "16px 18px" }}>
+              <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: tokens.textPrimary }}>Recovery Calendar</p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                {calDays.map((day) => {
+                  const ds = day.toISOString().slice(0, 10);
+                  const isToday = ds === todayKey;
+                  const done = (log[ds] ?? 0) > 0;
+                  return (
+                    <div key={ds} title={day.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} style={{ width: 30, height: 30, borderRadius: 7, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: done ? "#34c759" : isToday ? "rgba(0,122,255,0.12)" : isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", border: isToday ? "2px solid #007AFF" : "2px solid transparent", cursor: "default" }}>
+                      <span style={{ fontSize: 10, fontWeight: isToday ? 700 : 400, color: done ? "#fff" : isToday ? "#007AFF" : tokens.textMuted, lineHeight: 1 }}>{day.getDate()}</span>
+                      {done && <span style={{ fontSize: 7, color: "rgba(255,255,255,0.8)", lineHeight: 1 }}>✓</span>}
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ display: "flex", gap: 12, marginTop: 10, fontSize: 11, color: tokens.textMuted, flexWrap: "wrap" }}>
+                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: "#34c759", marginRight: 4 }} />Done</span>
+                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, border: "2px solid #007AFF", marginRight: 4 }} />Today</span>
+                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", marginRight: 4 }} />Pending</span>
+              </div>
+            </div>
+          )}
+
           <Assistant checklist={checklist} accessToken={accessToken} />
         </div>
       </div>
