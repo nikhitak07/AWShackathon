@@ -195,6 +195,8 @@ RULES:
 - Preserve exact dosages, frequencies, and timeframes from the document — do not paraphrase or generalize
 - Combine fragmented OCR lines into one coherent instruction if they clearly belong together
 - Do not duplicate items
+- NEVER refuse or ask for more information — always return whatever items you can find from the text provided
+- If the text is partial or truncated, extract what you can
 - Priority is "High" ONLY for: fever, chest pain, difficulty breathing, uncontrolled bleeding, severe symptoms, call 911, go to ER
 - All others are "Routine"
 
@@ -218,7 +220,7 @@ async function parseWithBedrock(rawText: string, userId: string): Promise<Checkl
       max_tokens: 4096,
       temperature: 0,
       system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: `Extract checklist items from this discharge document:\n\n${rawText}` }],
+      messages: [{ role: "user", content: `Extract all checklist items from this discharge document text. Even if the text appears incomplete or truncated, extract every actionable instruction you can find. Do not ask for more information — just extract what is present:\n\n${rawText}` }],
     }),
   }));
 
@@ -266,6 +268,8 @@ export const parseHandler: APIGatewayProxyHandler = async (event) => {
   if (!rawText || !userId) {
     return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: "rawText and userId are required." }) };
   }
+
+  console.log(`parseHandler received rawText (${rawText.length} chars):`, rawText.substring(0, 300));
 
   try {
     const checklist = await parseWithBedrock(rawText, userId);
