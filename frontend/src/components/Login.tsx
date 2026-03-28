@@ -6,7 +6,6 @@ import {
   AssociateSoftwareTokenCommand,
   VerifySoftwareTokenCommand,
   SignUpCommand,
-  ConfirmSignUpCommand,
   AuthFlowType,
   ChallengeNameType,
 } from "@aws-sdk/client-cognito-identity-provider";
@@ -20,7 +19,7 @@ interface Props {
   onLogin: (token: string, username: string) => void;
 }
 
-type Step = "credentials" | "signup" | "confirm" | "mfa" | "new_password" | "mfa_setup";
+type Step = "credentials" | "signup" | "mfa" | "new_password" | "mfa_setup";
 
 export const Login: React.FC<Props> = ({ onLogin }) => {
   const [username, setUsername] = useState("");
@@ -31,9 +30,8 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
   const [session, setSession] = useState<string | undefined>();
   const [secretCode, setSecretCode] = useState("");
   const [setupTotp, setSetupTotp] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
+  const [signupName, setSignupName] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
-  const [confirmCode, setConfirmCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -121,35 +119,22 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
         ClientId: CLIENT_ID,
         Username: username,
         Password: signupPassword,
-        UserAttributes: [{ Name: "email", Value: signupEmail }],
+        UserAttributes: [{ Name: "name", Value: signupName }],
       }));
-      setStep("confirm");
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Sign up failed.");
-    } finally { setLoading(false); }
-  };
-
-  const handleConfirm = async (e: React.FormEvent) => {
-    e.preventDefault(); setError(""); setLoading(true);
-    try {
-      await cognitoClient.send(new ConfirmSignUpCommand({
-        ClientId: CLIENT_ID,
-        Username: username,
-        ConfirmationCode: confirmCode,
-      }));
-      // Auto sign in after confirmation
-      setPassword(signupPassword);
-      setStep("credentials");
-      // Trigger login automatically
+      // Auto sign in immediately after signup
       const res = await cognitoClient.send(new InitiateAuthCommand({
         AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
         ClientId: CLIENT_ID,
         AuthParameters: { USERNAME: username, PASSWORD: signupPassword },
       }));
       if (res.AuthenticationResult) finish(res.AuthenticationResult);
-      else setStep("credentials");
+      else if (res.ChallengeName === ChallengeNameType.NEW_PASSWORD_REQUIRED) {
+        setSession(res.Session); setStep("new_password");
+      } else {
+        setStep("credentials");
+      }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Confirmation failed.");
+      setError(err instanceof Error ? err.message : "Sign up failed.");
     } finally { setLoading(false); }
   };
 
@@ -199,10 +184,10 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
           <>
             <p style={s.subtitle}>Create an account</p>
             <form onSubmit={handleSignup} style={s.form}>
+              <input style={s.input} type="text" placeholder="Full name" value={signupName}
+                onChange={(e) => setSignupName(e.target.value)} autoComplete="name" />
               <input style={s.input} type="text" placeholder="Username" value={username}
                 onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
-              <input style={s.input} type="email" placeholder="Email" value={signupEmail}
-                onChange={(e) => setSignupEmail(e.target.value)} autoComplete="email" />
               <input style={s.input} type="password" placeholder="Password" value={signupPassword}
                 onChange={(e) => setSignupPassword(e.target.value)} autoComplete="new-password" />
               <p style={s.hint}>Min 12 chars · upper + lower + number + symbol</p>
@@ -218,19 +203,6 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
           </>
         )}
 
-        {step === "confirm" && (
-          <>
-            <p style={s.subtitle}>Check your email for a verification code</p>
-            <form onSubmit={handleConfirm} style={s.form}>
-              <input style={s.input} type="text" placeholder="Verification code" value={confirmCode}
-                onChange={(e) => setConfirmCode(e.target.value)} inputMode="numeric" />
-              {error && <p style={s.error}>{error}</p>}
-              <button style={s.button} type="submit" disabled={loading}>
-                {loading ? "Verifying…" : "Verify Email"}
-              </button>
-            </form>
-          </>
-        )}
 
         {step === "new_password" && (
           <>
@@ -390,12 +362,7 @@ const s: Record<string, React.CSSProperties> = {
     letterSpacing: "-0.2px",
     transition: "opacity 0.15s",
   },
-<<<<<<< Updated upstream
-  buttonDisabled: { opacity: 0.5, cursor: "not-allowed" },
-  error: { color: "#ff453a", fontSize: 13, margin: 0, textAlign: "center" as const },
-=======
   error: { color: "#e53e3e", fontSize: 13, margin: 0 },
   switchText: { fontSize: 13, color: "#8e8e93", textAlign: "center" as const, marginTop: 12 },
   switchBtn: { background: "none", border: "none", color: "#3182ce", cursor: "pointer", fontSize: 13, fontWeight: 600, padding: 0 },
->>>>>>> Stashed changes
 };

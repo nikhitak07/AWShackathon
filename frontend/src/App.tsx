@@ -2,12 +2,8 @@ import React, { useState, useCallback } from "react";
 import { Uploader } from "./components/Uploader";
 import { ChecklistView } from "./components/ChecklistView";
 import { Login } from "./components/Login";
-<<<<<<< Updated upstream
-import { WelcomePage } from "./components/WelcomePage";
-=======
 import { Assistant } from "./components/Assistant";
 import { History } from "./components/History";
->>>>>>> Stashed changes
 import type { Checklist } from "@shared/types";
 
 type AppState = "login" | "upload" | "checklist";
@@ -41,12 +37,8 @@ const App: React.FC = () => {
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [saveError, setSaveError] = useState("");
   const [accessToken, setAccessToken] = useState("");
-<<<<<<< Updated upstream
-  const [username, setUsername] = useState("");
-=======
   const [userId, setUserId] = useState("");
   const [tab, setTab] = useState<Tab>("checklist");
->>>>>>> Stashed changes
 
   const authHeaders = {
     "Content-Type": "application/json",
@@ -72,9 +64,6 @@ const App: React.FC = () => {
   }, [accessToken]);
 
   if (appState === "login") {
-<<<<<<< Updated upstream
-    return <Login onLogin={(token, user) => { setAccessToken(token); setUsername(user); setAppState("upload"); }} />;
-=======
     return (
       <Login
         onLogin={(token) => {
@@ -84,14 +73,12 @@ const App: React.FC = () => {
         }}
       />
     );
->>>>>>> Stashed changes
   }
 
   if (appState === "upload" || !checklist) {
     return (
       <Uploader
         accessToken={accessToken}
-        username={username}
         onChecklistReady={async (cl) => {
           const reset = applyDailyReset(cl);
           setChecklist(reset);
@@ -118,19 +105,6 @@ const App: React.FC = () => {
           {saveError}
         </div>
       )}
-<<<<<<< Updated upstream
-      <ChecklistView
-        checklist={checklist}
-        onChange={handleChecklistChange}
-        username={username}
-        accessToken={accessToken}
-        onNewUpload={() => {
-          setChecklist(null);
-          setSaveError("");
-          setAppState("upload");
-        }}
-      />
-=======
 
       {/* Tab bar */}
       <div style={tabBar}>
@@ -184,7 +158,6 @@ const App: React.FC = () => {
       )}
 
       <Assistant checklist={checklist} accessToken={accessToken} />
->>>>>>> Stashed changes
     </>
   );
 };

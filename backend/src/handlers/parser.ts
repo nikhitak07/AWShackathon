@@ -175,6 +175,7 @@ async function parseWithBedrock(rawText: string, userId: string): Promise<Checkl
     body: JSON.stringify({
       anthropic_version: "bedrock-2023-05-31",
       max_tokens: 2048,
+      temperature: 0,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: `Extract checklist items from this discharge document:\n\n${rawText}` }],
     }),

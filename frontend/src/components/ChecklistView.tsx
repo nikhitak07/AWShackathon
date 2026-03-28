@@ -12,7 +12,7 @@ const CATEGORY_META: Record<Category, { icon: string; color: string; bg: string;
 };
 
 const CATEGORY_ORDER: Category[] = [
-  "WarningSigns", "Medications", "FollowUpAppointments", "DietaryRestrictions", "DailyActivities",
+  "DailyActivities", "WarningSigns", "Medications", "FollowUpAppointments", "DietaryRestrictions",
 ];
 
 interface Props {
