@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTheme } from "../ThemeContext";
 import { ThemeToggle } from "./ThemeToggle";
+import { AsclepiusIcon } from "./Logo";
 import {
   CognitoIdentityProviderClient,
   InitiateAuthCommand,
@@ -157,10 +158,7 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
       <div style={{ position: "relative", zIndex: 1, background: tokens.cardBg, backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: `1px solid ${tokens.border}`, borderRadius: 24, padding: "40px 36px", width: "100%", maxWidth: 400, boxShadow: isDark ? "0 24px 80px rgba(0,0,0,0.4)" : "0 8px 40px rgba(0,0,0,0.10)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 32 }}>
           <div style={{ width: 40, height: 40, background: "linear-gradient(135deg, #007AFF, #5856d6)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(0,122,255,0.35)" }}>
-            <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-              <path d="M10 22V14l6-4 6 4v8" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-              <rect x="13" y="17" width="6" height="5" rx="1" stroke="#fff" strokeWidth="2"/>
-            </svg>
+            <AsclepiusIcon size={22} />
           </div>
           <span style={{ fontSize: 20, fontWeight: 800, color: tokens.textPrimary, letterSpacing: "-0.4px" }}>MediGuide</span>
         </div>

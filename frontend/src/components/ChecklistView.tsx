@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { Checklist, ChecklistItem, Category } from "@shared/types";
 import { v4 as uuidv4 } from "uuid";
+import { AsclepiusIcon } from "./Logo";
 import { Assistant } from "./Assistant";
 import { useTheme } from "../ThemeContext";
 import { ThemeToggle } from "./ThemeToggle";
@@ -77,10 +78,7 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 40px", borderBottom: `1px solid ${tokens.border}`, background: tokens.navBg, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", position: "sticky", top: 0, zIndex: 10 }}>
         <button onClick={onNewUpload} style={{ display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
           <div style={{ width: 34, height: 34, background: "linear-gradient(135deg, #007AFF, #5856d6)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
-              <path d="M10 22V14l6-4 6 4v8" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-              <rect x="13" y="17" width="6" height="5" rx="1" stroke="#fff" strokeWidth="2"/>
-            </svg>
+            <AsclepiusIcon size={20} />
           </div>
           <span style={{ fontSize: 17, fontWeight: 800, color: tokens.textPrimary, letterSpacing: "-0.3px" }}>MediGuide</span>
         </button>

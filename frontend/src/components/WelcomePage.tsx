@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "../ThemeContext";
 import { ThemeToggle } from "./ThemeToggle";
+import { AsclepiusIcon } from "./Logo";
 
 interface Props {
   onContinue: () => void;
@@ -8,7 +9,7 @@ interface Props {
 
 const STEPS = [
   {
-    num: "01",
+    num: "",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#007AFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -19,7 +20,7 @@ const STEPS = [
     desc: "Snap a photo or upload your hospital discharge document.",
   },
   {
-    num: "02",
+    num: "",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5856d6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
@@ -29,7 +30,7 @@ const STEPS = [
     desc: "Our AI extracts medications, appointments, and warning signs automatically.",
   },
   {
-    num: "03",
+    num: "",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34c759" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="9 11 12 14 22 4"/>
@@ -69,10 +70,7 @@ export const WelcomePage: React.FC<Props> = ({ onContinue }) => {
         {/* Logo */}
         <div style={{ display: "inline-flex", alignItems: "center", gap: 10, marginBottom: 36 }}>
           <div style={{ width: 48, height: 48, background: "linear-gradient(135deg, #007AFF, #5856d6)", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 24px rgba(0,122,255,0.45)" }}>
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-              <path d="M10 22V14l6-4 6 4v8" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-              <rect x="13" y="17" width="6" height="5" rx="1" stroke="#fff" strokeWidth="2"/>
-            </svg>
+            <AsclepiusIcon size={28} />
           </div>
           <span style={{ fontSize: 26, fontWeight: 800, color: tokens.textPrimary, letterSpacing: "-0.6px" }}>MediGuide</span>
         </div>
@@ -94,7 +92,7 @@ export const WelcomePage: React.FC<Props> = ({ onContinue }) => {
 
         {/* Tagline */}
         <p style={{ fontSize: 18, color: tokens.textMuted, lineHeight: 1.65, margin: "0 auto 44px", maxWidth: 520, textAlign: "center" }}>
-          Upload your hospital discharge papers and get a clear, AI-powered checklist — with a medical assistant ready to answer every question.
+          Upload your hospital discharge papers and get a clear, AI-powered checklist with a medical assistant ready to help.
         </p>
 
         {/* CTA */}
@@ -102,7 +100,7 @@ export const WelcomePage: React.FC<Props> = ({ onContinue }) => {
           style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "17px 40px", background: "linear-gradient(135deg, #007AFF, #0063d1)", color: "#fff", border: "none", borderRadius: 50, fontSize: 17, fontWeight: 700, cursor: "pointer", letterSpacing: "-0.2px", marginBottom: 48, animation: "ctaPulse 3s ease-in-out infinite", fontFamily: "inherit" }}
           onClick={onContinue}
         >
-          Get Started — it's free
+          Get Started
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
           </svg>
