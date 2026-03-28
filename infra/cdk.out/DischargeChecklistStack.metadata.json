@@ -173,6 +173,12 @@
       "data": "LockoutTriggerRole17F69238"
     }
   ],
+  "/DischargeChecklistStack/PreSignUpAutoConfirmTrigger/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PreSignUpAutoConfirmTrigger54EA9770"
+    }
+  ],
   "/DischargeChecklistStack/PreAuthLockoutTrigger/Resource": [
     {
       "type": "aws:cdk:logicalId",
@@ -183,6 +189,12 @@
     {
       "type": "aws:cdk:logicalId",
       "data": "PostAuthLockoutTrigger531A932F"
+    }
+  ],
+  "/DischargeChecklistStack/UserPool/PreSignUpCognito": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserPoolPreSignUpCognito3AFF8F1F"
     }
   ],
   "/DischargeChecklistStack/UserPool/PreAuthenticationCognito": [

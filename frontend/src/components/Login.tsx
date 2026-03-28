@@ -209,6 +209,7 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
           </>
         )}
 
+
         {step === "new_password" && (
           <>
             <h2 style={{ margin: "0 0 6px", fontSize: 26, fontWeight: 700, color: tokens.textPrimary, letterSpacing: "-0.5px" }}>New password</h2>

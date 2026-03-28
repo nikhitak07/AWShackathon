@@ -769,12 +769,40 @@
     "aws:cdk:path": "DischargeChecklistStack/LockoutTriggerRole/DefaultPolicy/Resource"
    }
   },
+  "PreSignUpAutoConfirmTrigger54EA9770": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
+     "S3Key": "457d6797a09412165f117bd70bfb2a74247d0b16788015fc665d11d2ba5a7e5b.zip"
+    },
+    "Handler": "index.preSignUpHandler",
+    "Role": {
+     "Fn::GetAtt": [
+      "LockoutTriggerRole17F69238",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 5
+   },
+   "DependsOn": [
+    "LockoutTriggerRoleDefaultPolicyC76E467F",
+    "LockoutTriggerRole17F69238"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/PreSignUpAutoConfirmTrigger/Resource",
+    "aws:asset:path": "asset.457d6797a09412165f117bd70bfb2a74247d0b16788015fc665d11d2ba5a7e5b",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
   "PreAuthLockoutTriggerFD5D236A": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "25a72fb3b1c927cd3e754b1c180becb1bf9f2759044501e99d5307c3443ed851.zip"
+     "S3Key": "457d6797a09412165f117bd70bfb2a74247d0b16788015fc665d11d2ba5a7e5b.zip"
     },
     "Environment": {
      "Variables": {
@@ -800,7 +828,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/PreAuthLockoutTrigger/Resource",
-    "aws:asset:path": "asset.25a72fb3b1c927cd3e754b1c180becb1bf9f2759044501e99d5307c3443ed851",
+    "aws:asset:path": "asset.457d6797a09412165f117bd70bfb2a74247d0b16788015fc665d11d2ba5a7e5b",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -810,7 +838,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "25a72fb3b1c927cd3e754b1c180becb1bf9f2759044501e99d5307c3443ed851.zip"
+     "S3Key": "457d6797a09412165f117bd70bfb2a74247d0b16788015fc665d11d2ba5a7e5b.zip"
     },
     "Environment": {
      "Variables": {
@@ -835,9 +863,31 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/PostAuthLockoutTrigger/Resource",
-    "aws:asset:path": "asset.25a72fb3b1c927cd3e754b1c180becb1bf9f2759044501e99d5307c3443ed851",
+    "aws:asset:path": "asset.457d6797a09412165f117bd70bfb2a74247d0b16788015fc665d11d2ba5a7e5b",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
+   }
+  },
+  "UserPoolPreSignUpCognito3AFF8F1F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "PreSignUpAutoConfirmTrigger54EA9770",
+      "Arn"
+     ]
+    },
+    "Principal": "cognito-idp.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "UserPool6BA7E5F2",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DischargeChecklistStack/UserPool/PreSignUpCognito"
    }
   },
   "UserPoolPreAuthenticationCognito368E0410": {
@@ -914,6 +964,12 @@
      "PreAuthentication": {
       "Fn::GetAtt": [
        "PreAuthLockoutTriggerFD5D236A",
+       "Arn"
+      ]
+     },
+     "PreSignUp": {
+      "Fn::GetAtt": [
+       "PreSignUpAutoConfirmTrigger54EA9770",
        "Arn"
       ]
      }
