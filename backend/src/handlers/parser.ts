@@ -156,16 +156,55 @@ const CORS_HEADERS = {
 };
 
 const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION ?? "us-east-1" });
-const MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0";
+const MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0";
 
-const SYSTEM_PROMPT = `You are a medical discharge document parser. 
-Extract ONLY actionable patient instructions from the document text.
-Ignore: patient name, DOB, address, phone, MRN, hospital name, physician name, dates, insurance info, and any other personal identifiers.
-Focus on: medications to take, follow-up appointments, dietary restrictions, warning signs to watch for, and daily activity instructions.
-Return a JSON array of objects with this exact shape:
-[{"text":"instruction text","category":"Medications|FollowUpAppointments|DietaryRestrictions|WarningSigns|DailyActivities","priority":"High|Routine","dateTime":"ISO8601 or null"}]
-Priority is High only for: fever, chest pain, difficulty breathing, uncontrolled bleeding, severe symptoms, emergency situations.
-Return ONLY the JSON array, no other text.`;
+const SYSTEM_PROMPT = `You are a medical discharge document parser. Your job is to extract EVERY actionable patient care instruction from hospital discharge paperwork. It is critical that you do not miss anything.
+
+MEDICATIONS — extract ALL of them, every single one:
+- Include every drug mentioned, even if it appears in a list or table
+- Include the full name (brand and/or generic), exact dosage, frequency, route (oral, topical, etc.), and duration if stated
+- If a medication appears multiple times, include it once with all details combined
+- Example: "Take Metformin 500mg by mouth twice daily with meals for 30 days"
+
+FOLLOW-UP APPOINTMENTS — extract ALL of them:
+- Doctor visits, specialist referrals, lab work, blood tests, imaging (X-ray, MRI, ultrasound)
+- Include the provider name/specialty and timeframe if mentioned
+- Example: "Follow up with Dr. Smith (cardiologist) in 2 weeks"
+
+DIETARY RESTRICTIONS — extract ALL of them:
+- Foods and drinks to avoid or limit
+- Fluid intake instructions
+- Special diets (low sodium, diabetic, etc.)
+
+WARNING SIGNS — extract ALL of them:
+- Every symptom or situation that requires calling a doctor or going to the ER
+- Be specific — include the exact symptom described
+
+DAILY ACTIVITY INSTRUCTIONS — extract ALL of them:
+- Exercise restrictions, lifting limits, driving restrictions
+- Wound care, dressing changes, incision care
+- Bathing, showering restrictions
+- Rest and sleep instructions
+- Any other activity-related instruction
+
+RULES:
+- COMPLETENESS IS THE TOP PRIORITY — it is better to include too many items than to miss one
+- Each item must be a complete, specific, standalone instruction
+- Preserve exact dosages, frequencies, and timeframes from the document — do not paraphrase or generalize
+- Combine fragmented OCR lines into one coherent instruction if they clearly belong together
+- Do not duplicate items
+- Priority is "High" ONLY for: fever, chest pain, difficulty breathing, uncontrolled bleeding, severe symptoms, call 911, go to ER
+- All others are "Routine"
+
+EXCLUDE only:
+- Patient name, date of birth, address, phone number, MRN, insurance info
+- Hospital name, physician name, nurse name, department headers
+- Admission/discharge dates, room numbers, page numbers
+- Signatures, billing information
+- Pure labels or headers with zero actionable content
+
+Return ONLY a JSON array with this exact shape, no markdown, no explanation:
+[{"text":"full specific instruction text","category":"Medications|FollowUpAppointments|DietaryRestrictions|WarningSigns|DailyActivities","priority":"High|Routine","dateTime":"YYYY-MM-DD or null"}]`;
 
 async function parseWithBedrock(rawText: string, userId: string): Promise<Checklist> {
   const response = await bedrock.send(new InvokeModelCommand({
@@ -174,7 +213,7 @@ async function parseWithBedrock(rawText: string, userId: string): Promise<Checkl
     accept: "application/json",
     body: JSON.stringify({
       anthropic_version: "bedrock-2023-05-31",
-      max_tokens: 2048,
+      max_tokens: 4096,
       temperature: 0,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: `Extract checklist items from this discharge document:\n\n${rawText}` }],

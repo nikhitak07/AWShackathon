@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import type { Checklist } from "@shared/types";
-import { getMockChecklist } from "../utils/parser";
 import { useTheme } from "../ThemeContext";
 import { ThemeToggle } from "./ThemeToggle";
 import { AsclepiusIcon } from "./Logo";
@@ -189,16 +188,6 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, onOpenExisting, ac
     } finally { setLoading(false); }
   };
 
-  const useMockData = () => {
-    setLoading(true);
-    setTimeout(() => {
-      const cl = getMockChecklist("demo-user");
-      setPendingChecklist(cl);
-      setDocName("Sample Discharge");
-      setLoading(false);
-    }, 800);
-  };
-
   const handleDeleteAll = async () => {
     const ids = pastDocs.map((d) => d.id);
     setPastDocs([]);
@@ -315,15 +304,6 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, onOpenExisting, ac
                   <span style={{ color: tokens.textMuted, fontSize: 13 }}>AI is analyzing your document…</span>
                 </div>
               )}
-
-              <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "18px 0 14px" }}>
-                <div style={{ flex: 1, height: 1, background: tokens.orLine }} />
-                <span style={{ color: tokens.textMuted, fontSize: 12 }}>or try a demo</span>
-                <div style={{ flex: 1, height: 1, background: tokens.orLine }} />
-              </div>
-              <button style={{ width: "100%", padding: "12px", background: tokens.btnSecondaryBg, border: `1px solid ${tokens.border}`, borderRadius: 12, fontSize: 14, fontWeight: 600, color: "#007AFF", cursor: "pointer", opacity: loading ? 0.4 : 1, fontFamily: "inherit" }} onClick={useMockData} disabled={loading}>
-                Load sample discharge data
-              </button>
             </div>
           )}
 
