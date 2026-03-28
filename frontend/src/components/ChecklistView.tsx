@@ -57,7 +57,8 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
   };
 
   const warningSigns = checklist.items.filter((i) => i.category === "WarningSigns");
-  const checklistItems = checklist.items.filter((i) => i.category !== "WarningSigns");
+  const appointments = checklist.items.filter((i) => i.category === "FollowUpAppointments");
+  const checklistItems = checklist.items.filter((i) => i.category !== "WarningSigns" && i.category !== "FollowUpAppointments");
 
   const completedCount = checklistItems.filter((i) => i.completed).length;
   const total = checklistItems.length;
@@ -97,7 +98,7 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
 
           {/* Warning Signs Banner */}
           {warningSigns.length > 0 && (
-            <div style={{ background: isDark ? "rgba(255,149,0,0.12)" : "#fff8ed", border: "1.5px solid rgba(255,149,0,0.4)", borderRadius: 14, padding: "14px 18px", marginBottom: 20 }}>
+            <div style={{ background: isDark ? "rgba(255,149,0,0.12)" : "#fff8ed", border: "1.5px solid rgba(255,149,0,0.4)", borderRadius: 14, padding: "14px 18px", marginBottom: 14 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
                 <span style={{ fontSize: 18 }}>⚠️</span>
                 <span style={{ fontSize: 15, fontWeight: 700, color: "#ff9500" }}>Warning Signs — Seek immediate care if you experience:</span>
@@ -110,6 +111,22 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
             </div>
           )}
 
+          {/* Follow-Up Appointments Banner */}
+          {appointments.length > 0 && (
+            <div style={{ background: isDark ? "rgba(0,122,255,0.12)" : "#eef5ff", border: "1.5px solid rgba(0,122,255,0.3)", borderRadius: 14, padding: "14px 18px", marginBottom: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <span style={{ fontSize: 18 }}>📅</span>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "#007AFF" }}>Follow-Up Appointments</span>
+              </div>
+              <ul style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 4 }}>
+                {appointments.map((item) => (
+                  <li key={item.id} style={{ fontSize: 14, color: isDark ? "#64b5f6" : "#003d80", lineHeight: 1.5 }}>
+                    {item.text}{item.dateTime && <span style={{ color: tokens.textMuted }}> · {item.dateTime}</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {/* Progress */}
           <div style={{ background: tokens.cardBg, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 16, padding: "16px 20px", marginBottom: 20, boxShadow: isDark ? "0 2px 20px rgba(0,0,0,0.3)" : "0 2px 12px rgba(0,0,0,0.06)", border: `1px solid ${tokens.border}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
@@ -122,7 +139,7 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
           </div>
 
           {/* Categories */}
-          {CATEGORY_ORDER.filter(cat => cat !== "WarningSigns").map((cat) => {
+          {CATEGORY_ORDER.filter(cat => cat !== "WarningSigns" && cat !== "FollowUpAppointments").map((cat) => {
             const items = checklistItems
               .filter((i) => i.category === cat)
               .sort((a, b) => a.priority === b.priority ? 0 : a.priority === "High" ? -1 : 1);
