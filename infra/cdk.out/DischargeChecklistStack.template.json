@@ -1287,6 +1287,7 @@
      }
     },
     "Handler": "index.uploadHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",
@@ -1312,7 +1313,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "46029ce7372b0f3b37e146e314be920348d4f21833b69582caafe51a84b511d0.zip"
+     "S3Key": "76f79eb40b7b5083d3259499cda05efe7cc39700f7a10df0cc54146127db4dd2.zip"
     },
     "Environment": {
      "Variables": {
@@ -1334,6 +1335,7 @@
      }
     },
     "Handler": "index.extractHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",
@@ -1341,7 +1343,7 @@
      ]
     },
     "Runtime": "nodejs20.x",
-    "Timeout": 35
+    "Timeout": 60
    },
    "DependsOn": [
     "ApiLambdaRoleDefaultPolicy84E47AF4",
@@ -1349,7 +1351,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/extractHandler/Resource",
-    "aws:asset:path": "asset.46029ce7372b0f3b37e146e314be920348d4f21833b69582caafe51a84b511d0",
+    "aws:asset:path": "asset.76f79eb40b7b5083d3259499cda05efe7cc39700f7a10df0cc54146127db4dd2",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -1359,7 +1361,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "ad5025185964c21ad708ce980063aa55a3c38857cf801f86faf499998b7cb865.zip"
+     "S3Key": "3bf5ec0130dc6ba2ac4d6ca50cab6cb00b719051b3ba89163aee29b97b3212ed.zip"
     },
     "Environment": {
      "Variables": {
@@ -1381,6 +1383,7 @@
      }
     },
     "Handler": "index.parseHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",
@@ -1396,7 +1399,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/parseHandler/Resource",
-    "aws:asset:path": "asset.ad5025185964c21ad708ce980063aa55a3c38857cf801f86faf499998b7cb865",
+    "aws:asset:path": "asset.3bf5ec0130dc6ba2ac4d6ca50cab6cb00b719051b3ba89163aee29b97b3212ed",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -1428,6 +1431,7 @@
      }
     },
     "Handler": "index.saveHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",
@@ -1475,6 +1479,7 @@
      }
     },
     "Handler": "index.getHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",
@@ -1522,6 +1527,7 @@
      }
     },
     "Handler": "index.updateHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",
@@ -1569,6 +1575,7 @@
      }
     },
     "Handler": "index.deleteHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",
@@ -1616,6 +1623,7 @@
      }
     },
     "Handler": "index.listHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",
@@ -1663,6 +1671,7 @@
      }
     },
     "Handler": "index.assistantHandler",
+    "MemorySize": 256,
     "Role": {
      "Fn::GetAtt": [
       "ApiLambdaRole66D0B4CD",

@@ -248,6 +248,7 @@ export class DischargeChecklistStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_20_X,
       role: apiLambdaRole,
       environment: commonEnv,
+      memorySize: 256,
       bundling: {
         externalModules: [], // bundle everything including node_modules
         tsconfig: path.resolve(__dirname, "../../backend/tsconfig.json"),
@@ -266,7 +267,7 @@ export class DischargeChecklistStack extends cdk.Stack {
     // Lambda functions
     // -------------------------------------------------------------------------
     const uploadFn = fn("handlers/uploader.ts", "uploadHandler");
-    const extractFn = fn("handlers/extractor.ts", "extractHandler", 35);
+    const extractFn = fn("handlers/extractor.ts", "extractHandler", 60);
     const parseFn = fn("handlers/parser.ts", "parseHandler", 30);
     const checklistSaveFn = fn("handlers/checklist.ts", "saveHandler", 10);
     const checklistGetFn = fn("handlers/checklist.ts", "getHandler", 10);

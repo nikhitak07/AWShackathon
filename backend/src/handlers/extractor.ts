@@ -1,20 +1,21 @@
 /**
- * Extractor Lambda handler — uses Claude vision to extract text from
+ * Extractor Lambda handler — calls Amazon Rekognition to extract text from
  * uploaded images stored in S3.
  *
  * Requirements: 2.1, 2.2, 2.3, 2.5, 9.4
  */
 
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
+import {
+  RekognitionClient,
+  DetectTextCommand,
+} from "@aws-sdk/client-rekognition";
 import type { APIGatewayProxyHandler } from "aws-lambda";
 import type { ExtractionRequest, ExtractionResult } from "@shared/types";
 
 const IMAGES_BUCKET = process.env.IMAGES_BUCKET ?? "discharge-images-temp";
+const TIMEOUT_MS = 30_000;
 
-const s3 = new S3Client({});
-const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION ?? "us-east-1" });
-const MODEL_ID = "us.anthropic.claude-3-5-haiku-20241022-v1:0";
+const rekognition = new RekognitionClient({});
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -38,50 +39,31 @@ export async function extractText(
     throw new ExtractionError("PDF extraction is not supported. Please upload a JPEG or PNG image.");
   }
 
-  // Fetch image from S3
-  const s3Res = await s3.send(new GetObjectCommand({
-    Bucket: IMAGES_BUCKET,
-    Key: req.uploadId,
-  }));
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new ExtractionError("Text extraction timed out. Please try again.")), TIMEOUT_MS)
+  );
 
-  const imageBytes = await s3Res.Body!.transformToByteArray();
-  const base64Image = Buffer.from(imageBytes).toString("base64");
-  const mediaType = (contentType ?? "image/jpeg").replace("image/jpg", "image/jpeg");
+  try {
+    const result = await Promise.race([
+      rekognition.send(new DetectTextCommand({
+        Image: { S3Object: { Bucket: IMAGES_BUCKET, Name: req.uploadId } },
+      })),
+      timeoutPromise,
+    ]);
 
-  // Send to Claude vision
-  const response = await bedrock.send(new InvokeModelCommand({
-    modelId: MODEL_ID,
-    contentType: "application/json",
-    accept: "application/json",
-    body: JSON.stringify({
-      anthropic_version: "bedrock-2023-05-31",
-      max_tokens: 4096,
-      messages: [{
-        role: "user",
-        content: [
-          {
-            type: "image",
-            source: { type: "base64", media_type: mediaType, data: base64Image },
-          },
-          {
-            type: "text",
-            text: "Please extract ALL text from this medical discharge document exactly as it appears. Include every line, every medication, every instruction. Return only the raw extracted text, no commentary.",
-          },
-        ],
-      }],
-    }),
-  }));
+    const rawText = (result.TextDetections ?? [])
+      .filter((d) => d.Type === "LINE" && d.DetectedText)
+      .map((d) => d.DetectedText!)
+      .join("\n");
 
-  const body = JSON.parse(new TextDecoder().decode(response.body));
-  const rawText = body.content?.[0]?.text ?? "";
+    console.log(`Rekognition extracted ${rawText.split("\n").length} lines, ${rawText.length} chars`);
 
-  console.log(`Claude vision extracted ${rawText.length} chars:`, rawText.substring(0, 300));
-
-  if (!rawText.trim()) {
-    throw new ExtractionError("No text could be extracted from the image. Please check the image quality and try again.");
+    return { rawText, uploadId: req.uploadId };
+  } catch (err) {
+    if (err instanceof ExtractionError) throw err;
+    console.error("Rekognition error:", err);
+    throw new ExtractionError("Text extraction failed. Please check the image quality and try again.");
   }
-
-  return { rawText, uploadId: req.uploadId };
 }
 
 export const extractHandler: APIGatewayProxyHandler = async (event) => {
@@ -102,6 +84,7 @@ export const extractHandler: APIGatewayProxyHandler = async (event) => {
     const result = await extractText(body, contentType);
     return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(result) };
   } catch (err) {
+    console.error("extractHandler error:", err);
     const message = err instanceof ExtractionError ? err.message : "An unexpected error occurred during extraction.";
     return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ error: message }) };
   }

@@ -156,7 +156,7 @@ const CORS_HEADERS = {
 };
 
 const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION ?? "us-east-1" });
-const MODEL_ID = "us.anthropic.claude-3-5-haiku-20241022-v1:0";
+const MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0";
 
 const SYSTEM_PROMPT = `You are a medical discharge document parser. Your job is to extract EVERY actionable patient care instruction from hospital discharge paperwork. It is critical that you do not miss anything.
 
