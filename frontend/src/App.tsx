@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Uploader } from "./components/Uploader";
 import { ChecklistView } from "./components/ChecklistView";
 import { Login } from "./components/Login";
+import { Assistant } from "./components/Assistant";
 import type { Checklist } from "@shared/types";
 
 type AppState = "login" | "upload" | "checklist";
@@ -74,13 +75,13 @@ const App: React.FC = () => {
       <ChecklistView
         checklist={checklist}
         onChange={handleChecklistChange}
-        username={username}
         onNewUpload={() => {
           setChecklist(null);
           setSaveError("");
           setAppState("upload");
         }}
       />
+      <Assistant checklist={checklist} accessToken={accessToken} />
     </>
   );
 };

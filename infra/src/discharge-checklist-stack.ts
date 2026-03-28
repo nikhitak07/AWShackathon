@@ -259,6 +259,8 @@ export class DischargeChecklistStack extends cdk.Stack {
     const checklistDeleteFn = fn("handlers/checklist.ts", "deleteHandler", 10);
     const checklistListFn = fn("handlers/checklist.ts", "listHandler", 10);
 
+    const assistantFn = fn("handlers/assistant.ts", "assistantHandler", 30);
+
     // -------------------------------------------------------------------------
     // API Gateway — REST API with Cognito authorizer
     // -------------------------------------------------------------------------
@@ -315,6 +317,10 @@ export class DischargeChecklistStack extends cdk.Stack {
     // POST /parse
     const parse = this.api.root.addResource("parse");
     parse.addMethod("POST", integration(parseFn), authOptions);
+
+    // POST /assistant
+    const assistant = this.api.root.addResource("assistant");
+    assistant.addMethod("POST", integration(assistantFn), authOptions);
 
     // /checklists
     const checklists = this.api.root.addResource("checklists");

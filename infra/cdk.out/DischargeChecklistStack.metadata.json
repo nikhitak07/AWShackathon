@@ -257,6 +257,12 @@
       "data": "listHandler721F23B2"
     }
   ],
+  "/DischargeChecklistStack/assistantHandler/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "assistantHandlerC0AB2010"
+    }
+  ],
   "/DischargeChecklistStack/DischargeChecklistApi/Resource": [
     {
       "type": "aws:cdk:logicalId",
@@ -362,7 +368,7 @@
   "/DischargeChecklistStack/DischargeChecklistApi/Deployment/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "DischargeChecklistApiDeploymentD260D90Bd5cca0703533366f84ab587c2fe9bb98"
+      "data": "DischargeChecklistApiDeploymentD260D90B852999a96306ebe683be4c303ce18c61"
     }
   ],
   "/DischargeChecklistStack/DischargeChecklistApi/DeploymentStage.prod/Resource": [
@@ -417,6 +423,12 @@
     {
       "type": "aws:cdk:logicalId",
       "data": "DischargeChecklistApiparse0DB7761A"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/assistant/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiassistantCC41E221"
     }
   ],
   "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/Resource": [
@@ -501,6 +513,30 @@
     {
       "type": "aws:cdk:logicalId",
       "data": "DischargeChecklistApiparsePOST80651AE0"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/assistant/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiassistantOPTIONS6AE7C9B7"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/assistant/POST/ApiPermission.DischargeChecklistStackDischargeChecklistApiC0318167.POST..assistant": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiassistantPOSTApiPermissionDischargeChecklistStackDischargeChecklistApiC0318167POSTassistant24662B4E"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/assistant/POST/ApiPermission.Test.DischargeChecklistStackDischargeChecklistApiC0318167.POST..assistant": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiassistantPOSTApiPermissionTestDischargeChecklistStackDischargeChecklistApiC0318167POSTassistant7CBF362D"
+    }
+  ],
+  "/DischargeChecklistStack/DischargeChecklistApi/Default/assistant/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DischargeChecklistApiassistantPOST155920BA"
     }
   ],
   "/DischargeChecklistStack/DischargeChecklistApi/Default/checklists/OPTIONS/Resource": [
