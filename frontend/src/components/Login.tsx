@@ -8,7 +8,6 @@ import {
   AssociateSoftwareTokenCommand,
   VerifySoftwareTokenCommand,
   SignUpCommand,
-  ConfirmSignUpCommand,
   AuthFlowType,
   ChallengeNameType,
 } from "@aws-sdk/client-cognito-identity-provider";
@@ -22,7 +21,7 @@ interface Props {
   onLogin: (token: string, username: string) => void;
 }
 
-type Step = "credentials" | "signup" | "confirm_signup" | "mfa" | "new_password" | "mfa_setup";
+type Step = "credentials" | "signup" | "mfa" | "new_password" | "mfa_setup";
 
 export const Login: React.FC<Props> = ({ onLogin }) => {
   const { tokens, theme } = useTheme();
@@ -30,9 +29,7 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmCode, setConfirmCode] = useState("");
   const [totp, setTotp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [step, setStep] = useState<Step>("credentials");
@@ -49,7 +46,7 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username || !email || !password) { setError("Please fill in all fields."); return; }
+    if (!username || !password) { setError("Please fill in all fields."); return; }
     if (password !== confirmPassword) { setError("Passwords do not match."); return; }
     setError(""); setLoading(true);
     try {
@@ -57,30 +54,11 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
         ClientId: CLIENT_ID,
         Username: username,
         Password: password,
-        UserAttributes: [{ Name: "email", Value: email }],
       }));
-      setStep("confirm_signup");
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Sign up failed.";
-      setError(msg);
-    } finally { setLoading(false); }
-  };
-
-  const handleConfirmSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!confirmCode) { setError("Please enter the confirmation code."); return; }
-    setError(""); setLoading(true);
-    try {
-      await cognitoClient.send(new ConfirmSignUpCommand({
-        ClientId: CLIENT_ID,
-        Username: username,
-        ConfirmationCode: confirmCode,
-      }));
-      // Auto sign-in after confirmation
-      setPassword(""); setConfirmPassword(""); setConfirmCode("");
+      setPassword(""); setConfirmPassword("");
       setStep("credentials");
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Confirmation failed.";
+      const msg = err instanceof Error ? err.message : "Sign up failed.";
       setError(msg);
     } finally { setLoading(false); }
   };
@@ -213,8 +191,6 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
               <div style={fieldGroup}>
                 <input style={inputStyle} type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
                 <div style={{ height: 1, background: tokens.fieldDivider, margin: "0 16px" }} />
-                <input style={inputStyle} type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
-                <div style={{ height: 1, background: tokens.fieldDivider, margin: "0 16px" }} />
                 <input style={inputStyle} type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
                 <div style={{ height: 1, background: tokens.fieldDivider, margin: "0 16px" }} />
                 <input style={inputStyle} type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} autoComplete="new-password" />
@@ -226,20 +202,6 @@ export const Login: React.FC<Props> = ({ onLogin }) => {
               Already have an account?{" "}
               <button onClick={() => { setError(""); setStep("credentials"); }} style={{ background: "none", border: "none", color: "#007AFF", cursor: "pointer", fontSize: 13, fontFamily: "inherit", padding: 0 }}>Sign in</button>
             </p>
-          </>
-        )}
-
-        {step === "confirm_signup" && (
-          <>
-            <h2 style={{ margin: "0 0 6px", fontSize: 26, fontWeight: 700, color: tokens.textPrimary, letterSpacing: "-0.5px" }}>Verify email</h2>
-            <p style={{ margin: "0 0 24px", fontSize: 14, color: tokens.textMuted, lineHeight: 1.5 }}>We sent a confirmation code to your email. Enter it below.</p>
-            <form onSubmit={handleConfirmSignUp} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={fieldGroup}>
-                <input style={inputStyle} type="text" placeholder="Confirmation code" value={confirmCode} inputMode="numeric" onChange={(e) => setConfirmCode(e.target.value)} autoComplete="one-time-code" />
-              </div>
-              {error && <p style={{ color: "#ff453a", fontSize: 13, margin: 0, textAlign: "center" }}>{error}</p>}
-              <button style={primaryBtn} type="submit" disabled={loading}>{loading ? "Verifying…" : "Confirm"}</button>
-            </form>
           </>
         )}
 
