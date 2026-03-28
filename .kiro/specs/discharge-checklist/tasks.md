@@ -20,7 +20,7 @@ Implement a HIPAA-compliant serverless web application that converts hospital di
     - Set session token expiry to 8 hours
     - Return generic error message on invalid credentials (no username/password distinction)
     - _Requirements: 7.1, 7.2, 7.4, 7.5, 7.7_
-  - [~] 2.2 Implement account lockout after 5 failed attempts within 15 minutes with email notification
+  - [-] 2.2 Implement account lockout after 5 failed attempts within 15 minutes with email notification
     - _Requirements: 7.6_
   - [~] 2.3 Implement session expiry redirect — expired JWT redirects user to login and invalidates token
     - _Requirements: 7.3, 7.8_
