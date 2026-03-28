@@ -238,8 +238,8 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, onOpenExisting, ac
 
       {/* Full-width greeting — integrated into nav bar */}
       <div style={{ position: "relative", zIndex: 1, width: "100%", padding: "32px 40px 24px", boxSizing: "border-box", borderBottom: `1px solid ${tokens.border}` }}>
-        <h1 style={{ margin: 0, fontSize: "clamp(38px, 4.5vw, 60px)", fontWeight: 800, color: tokens.textPrimary, letterSpacing: "-2px", lineHeight: 1.05 }}>
-          {username ? `Hello, ${username}` : "Hello."}
+        <h1 style={{ margin: 0, fontSize: "clamp(38px, 4.5vw, 60px)", fontWeight: 500, color: tokens.textPrimary, letterSpacing: "-0.5px", lineHeight: 1.05 }}>
+          {username ? `Hello,\u2009${username}!` : "Hello."}
         </h1>
         <p style={{ margin: "6px 0 0", fontSize: 15, color: tokens.textMuted, fontWeight: 400 }}>
           Upload an official discharge document to get started, or reopen a previous one below.
