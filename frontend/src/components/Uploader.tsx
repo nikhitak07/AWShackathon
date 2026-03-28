@@ -53,7 +53,8 @@ function PastDocRow({ cl, accessToken, tokens, isDark, onOpen, onRename, onDelet
   const handleDelete = async () => {
     onDelete();
     try {
-      await fetch(`${API_BASE}/checklists/${cl.id}`, {
+      const uid = JSON.parse(atob(accessToken.split(".")[1])).sub as string;
+      await fetch(`${API_BASE}/checklists/${cl.id}?userId=${encodeURIComponent(uid)}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${accessToken}` },
       });
@@ -190,11 +191,12 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady, onOpenExisting, ac
 
   const handleDeleteAll = async () => {
     const ids = pastDocs.map((d) => d.id);
+    const uid = JSON.parse(atob(accessToken.split(".")[1])).sub as string;
     setPastDocs([]);
     setConfirmDeleteAll(false);
     ids.forEach((id) => {
       onDelete?.(id);
-      fetch(`${API_BASE}/checklists/${id}`, {
+      fetch(`${API_BASE}/checklists/${id}?userId=${encodeURIComponent(uid)}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${accessToken}` },
       }).catch(() => { /* silent */ });

@@ -1218,7 +1218,18 @@
        "Resource": "*"
       },
       {
-       "Action": "bedrock:InvokeModel",
+       "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "aws-marketplace:ViewSubscriptions",
+        "aws-marketplace:Subscribe"
+       ],
        "Effect": "Allow",
        "Resource": "*"
       },
@@ -1348,7 +1359,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "be6212ce059ca9e8f5a4faf67fa84f510eec35b5d2727a154632a68ce5db6daa.zip"
+     "S3Key": "742c97000977c7758d21f045cd063adc27b2d8d67f0c2f9362aba1e8b0c92fae.zip"
     },
     "Environment": {
      "Variables": {
@@ -1385,7 +1396,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/parseHandler/Resource",
-    "aws:asset:path": "asset.be6212ce059ca9e8f5a4faf67fa84f510eec35b5d2727a154632a68ce5db6daa",
+    "aws:asset:path": "asset.742c97000977c7758d21f045cd063adc27b2d8d67f0c2f9362aba1e8b0c92fae",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }

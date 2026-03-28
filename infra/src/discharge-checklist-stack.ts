@@ -212,7 +212,12 @@ export class DischargeChecklistStack extends cdk.Stack {
       resources: ["*"],
     }));
     apiLambdaRole.addToPolicy(new iam.PolicyStatement({
-      actions: ["bedrock:InvokeModel"],
+      actions: ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+      resources: ["*"],
+    }));
+
+    apiLambdaRole.addToPolicy(new iam.PolicyStatement({
+      actions: ["aws-marketplace:ViewSubscriptions", "aws-marketplace:Subscribe"],
       resources: ["*"],
     }));
 

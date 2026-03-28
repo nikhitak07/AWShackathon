@@ -156,7 +156,7 @@ const CORS_HEADERS = {
 };
 
 const bedrock = new BedrockRuntimeClient({ region: process.env.AWS_REGION ?? "us-east-1" });
-const MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0";
+const MODEL_ID = "us.anthropic.claude-3-5-haiku-20241022-v1:0";
 
 const SYSTEM_PROMPT = `You are a medical discharge document parser. Your job is to extract EVERY actionable patient care instruction from hospital discharge paperwork. It is critical that you do not miss anything.
 
@@ -224,6 +224,7 @@ async function parseWithBedrock(rawText: string, userId: string): Promise<Checkl
 
   const responseBody = JSON.parse(new TextDecoder().decode(response.body));
   const content = responseBody.content?.[0]?.text ?? "[]";
+  console.log("Bedrock raw response:", content.substring(0, 500));
 
   // Extract JSON array from response (Claude sometimes adds markdown)
   const jsonMatch = content.match(/\[[\s\S]*\]/);
@@ -270,6 +271,7 @@ export const parseHandler: APIGatewayProxyHandler = async (event) => {
     const checklist = await parseWithBedrock(rawText, userId);
     return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(checklist) };
   } catch (err) {
+    console.error("parseHandler error:", err);
     const message = err instanceof ParseError ? err.message : "Failed to generate checklist.";
     return { statusCode: 422, headers: CORS_HEADERS, body: JSON.stringify({ error: message }) };
   }
