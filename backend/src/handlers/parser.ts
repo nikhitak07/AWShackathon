@@ -161,10 +161,12 @@ const MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0";
 const SYSTEM_PROMPT = `You are a medical discharge document parser. Your job is to extract EVERY actionable patient care instruction from hospital discharge paperwork. It is critical that you do not miss anything.
 
 MEDICATIONS — extract ALL of them, every single one:
+- Each medication MUST be its own separate checklist item — never combine multiple drugs into one item
 - Include every drug mentioned, even if it appears in a list or table
 - Include the full name (brand and/or generic), exact dosage, frequency, route (oral, topical, etc.), and duration if stated
-- If a medication appears multiple times, include it once with all details combined
-- Example: "Take Metformin 500mg by mouth twice daily with meals for 30 days"
+- If you see 5 medications, you must produce 5 separate medication items — do not group or summarize them
+- Example item 1: "Take Metformin 500mg by mouth twice daily with meals for 30 days"
+- Example item 2: "Take Lisinopril 10mg by mouth once daily in the morning"
 
 FOLLOW-UP APPOINTMENTS — extract ALL of them:
 - Doctor visits, specialist referrals, lab work, blood tests, imaging (X-ray, MRI, ultrasound)
