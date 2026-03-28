@@ -1576,7 +1576,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-797715838679-us-east-1",
-     "S3Key": "a1f823092e48708a1ec853d2309a5ffeb2538f795f7ac563c9a294a46f82c806.zip"
+     "S3Key": "dd24eb04e2c0ac33f12aa15ab90eb481de6f74f56fc0d8b4ca4c79344ff9a041.zip"
     },
     "Environment": {
      "Variables": {
@@ -1613,7 +1613,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "DischargeChecklistStack/assistantHandler/Resource",
-    "aws:asset:path": "asset.a1f823092e48708a1ec853d2309a5ffeb2538f795f7ac563c9a294a46f82c806",
+    "aws:asset:path": "asset.dd24eb04e2c0ac33f12aa15ab90eb481de6f74f56fc0d8b4ca4c79344ff9a041",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
