@@ -890,9 +890,6 @@
     ],
     "EmailVerificationMessage": "The verification code to your new account is {####}",
     "EmailVerificationSubject": "Verify your new account",
-    "EnabledMfas": [
-     "SOFTWARE_TOKEN_MFA"
-    ],
     "LambdaConfig": {
      "PostAuthentication": {
       "Fn::GetAtt": [
@@ -907,7 +904,7 @@
       ]
      }
     },
-    "MfaConfiguration": "ON",
+    "MfaConfiguration": "OFF",
     "Policies": {
      "PasswordPolicy": {
       "MinimumLength": 12,

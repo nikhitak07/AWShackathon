@@ -154,8 +154,7 @@ export class DischargeChecklistStack extends cdk.Stack {
         requireDigits: true,
         requireSymbols: true,
       },
-      mfa: cognito.Mfa.REQUIRED,
-      mfaSecondFactor: { sms: false, otp: true },
+      mfa: cognito.Mfa.OFF,
       lambdaTriggers: {
         preAuthentication: preAuthLambda,
         postAuthentication: postAuthLambda,

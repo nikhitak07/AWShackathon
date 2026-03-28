@@ -8,23 +8,16 @@ type AppState = "login" | "upload" | "checklist";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
-/** Persists checklist changes to the backend. Fire-and-forget — UI stays responsive. */
-async function persistChecklist(cl: Checklist): Promise<void> {
-  try {
-    await fetch(`/api/checklists/${cl.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(cl),
-    });
-  } catch {
-    // Non-blocking — storage errors are surfaced by the backend on critical ops
-  }
-}
-
 const App: React.FC = () => {
   const [appState, setAppState] = useState<AppState>("login");
   const [checklist, setChecklist] = useState<Checklist | null>(null);
   const [saveError, setSaveError] = useState("");
+  const [accessToken, setAccessToken] = useState("");
+
+  const authHeaders = {
+    "Content-Type": "application/json",
+    "Authorization": accessToken,
+  };
 
   const handleChecklistChange = useCallback(async (cl: Checklist) => {
     setChecklist(cl);
@@ -32,7 +25,7 @@ const App: React.FC = () => {
     try {
       const res = await fetch(`${API_BASE}/checklists/${cl.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders,
         body: JSON.stringify(cl),
       });
       if (res.status === 503) {
@@ -41,23 +34,24 @@ const App: React.FC = () => {
     } catch {
       setSaveError("Changes could not be saved. Check your connection.");
     }
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken]);
 
   if (appState === "login") {
-    return <Login onLogin={() => setAppState("upload")} />;
+    return <Login onLogin={(token) => { setAccessToken(token); setAppState("upload"); }} />;
   }
 
   if (appState === "upload" || !checklist) {
     return (
       <Uploader
+        accessToken={accessToken}
         onChecklistReady={async (cl) => {
           setChecklist(cl);
           setAppState("checklist");
-          // Save the newly generated checklist
           try {
             await fetch(`${API_BASE}/checklists`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: authHeaders,
               body: JSON.stringify(cl),
             });
           } catch {

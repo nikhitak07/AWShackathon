@@ -8,9 +8,10 @@ const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
 interface Props {
   onChecklistReady: (checklist: Checklist) => void;
+  accessToken?: string;
 }
 
-export const Uploader: React.FC<Props> = ({ onChecklistReady }) => {
+export const Uploader: React.FC<Props> = ({ onChecklistReady, accessToken = "" }) => {
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady }) => {
       // Step 1: get a pre-signed upload URL
       const uploadRes = await fetch(`${API_BASE}/upload-url`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Authorization": accessToken },
         body: JSON.stringify({ fileName: file.name, contentType: file.type }),
       });
       if (!uploadRes.ok) throw new Error("Failed to get upload URL.");
@@ -59,7 +60,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady }) => {
       // Step 3: call the Extractor Lambda
       const extractRes = await fetch(`${API_BASE}/extract`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Authorization": accessToken },
         body: JSON.stringify({ uploadId, contentType: file.type }),
       });
       if (!extractRes.ok) {
@@ -71,7 +72,7 @@ export const Uploader: React.FC<Props> = ({ onChecklistReady }) => {
       // Step 4: call the Parser Lambda
       const parseRes = await fetch(`${API_BASE}/parse`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Authorization": accessToken },
         body: JSON.stringify({ rawText }),
       });
       if (!parseRes.ok) {

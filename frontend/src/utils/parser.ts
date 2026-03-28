@@ -60,7 +60,6 @@ export function parseText(rawText: string, userId: string): Checklist {
 
 // Demo checklist for local development
 export function getMockChecklist(userId = "demo-user"): Checklist {
-  const now = new Date().toISOString();
   return parseText(
     [
       "Take Metformin 500mg twice daily with meals",
