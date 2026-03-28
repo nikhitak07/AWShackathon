@@ -127,10 +127,11 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
   const cur = new Date(startDate);
   while (cur <= today) { calDays.push(new Date(cur)); cur.setDate(cur.getDate() + 1); }
 
-  // Today's completions
+  // Today's completions — only mark green when ALL actionable items are done
   const todayKey = today.toISOString().slice(0, 10);
   const log = { ...(checklist.completionLog ?? {}) };
-  if (completedCount > 0) log[todayKey] = completedCount;
+  if (pct === 100) log[todayKey] = completedCount;
+  else delete log[todayKey]; // clear today if no longer 100%
 
   const editInputStyle: React.CSSProperties = {
     flex: 1, padding: "8px 12px", borderRadius: 8,
@@ -326,22 +327,37 @@ export const ChecklistView: React.FC<Props> = ({ checklist, onChange, onNewUploa
           {/* Recovery Calendar */}
           {calDays.length > 0 && (
             <div style={{ background: tokens.cardBg, border: `1px solid ${tokens.border}`, borderRadius: 14, padding: "16px 18px" }}>
-              <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: tokens.textPrimary }}>Recovery Calendar</p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                {calDays.map((day) => {
-                  const ds = day.toISOString().slice(0, 10);
-                  const isToday = ds === todayKey;
-                  const done = (log[ds] ?? 0) > 0;
-                  return (
-                    <div key={ds} title={day.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} style={{ width: 30, height: 30, borderRadius: 7, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: done ? "#34c759" : isToday ? "rgba(0,122,255,0.12)" : isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", border: isToday ? "2px solid #007AFF" : "2px solid transparent", cursor: "default" }}>
-                      <span style={{ fontSize: 10, fontWeight: isToday ? 700 : 400, color: done ? "#fff" : isToday ? "#007AFF" : tokens.textMuted, lineHeight: 1 }}>{day.getDate()}</span>
-                      {done && <span style={{ fontSize: 7, color: "rgba(255,255,255,0.8)", lineHeight: 1 }}>✓</span>}
+              <p style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 700, color: tokens.textPrimary }}>Recovery Calendar</p>
+              {/* Group days by month */}
+              {(() => {
+                const months: { label: string; days: Date[] }[] = [];
+                calDays.forEach((day) => {
+                  const label = day.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+                  const last = months[months.length - 1];
+                  if (!last || last.label !== label) months.push({ label, days: [day] });
+                  else last.days.push(day);
+                });
+                return months.map((month) => (
+                  <div key={month.label} style={{ marginBottom: 12 }}>
+                    <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 600, color: tokens.textMuted, textTransform: "uppercase", letterSpacing: "0.5px" }}>{month.label}</p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                      {month.days.map((day) => {
+                        const ds = day.toISOString().slice(0, 10);
+                        const isToday = ds === todayKey;
+                        const done = (log[ds] ?? 0) > 0;
+                        return (
+                          <div key={ds} title={day.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} style={{ width: 30, height: 30, borderRadius: 7, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: done ? "#34c759" : isToday ? "rgba(0,122,255,0.12)" : isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", border: isToday ? "2px solid #007AFF" : "2px solid transparent", cursor: "default" }}>
+                            <span style={{ fontSize: 10, fontWeight: isToday ? 700 : 400, color: done ? "#fff" : isToday ? "#007AFF" : tokens.textMuted, lineHeight: 1 }}>{day.getDate()}</span>
+                            {done && <span style={{ fontSize: 7, color: "rgba(255,255,255,0.8)", lineHeight: 1 }}>✓</span>}
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </div>
-              <div style={{ display: "flex", gap: 12, marginTop: 10, fontSize: 11, color: tokens.textMuted, flexWrap: "wrap" }}>
-                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: "#34c759", marginRight: 4 }} />Done</span>
+                  </div>
+                ));
+              })()}
+              <div style={{ display: "flex", gap: 12, marginTop: 4, fontSize: 11, color: tokens.textMuted, flexWrap: "wrap" }}>
+                <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: "#34c759", marginRight: 4 }} />All done</span>
                 <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, border: "2px solid #007AFF", marginRight: 4 }} />Today</span>
                 <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 3, background: isDark ? "rgba(255,255,255,0.06)" : "#f2f2f7", marginRight: 4 }} />Pending</span>
               </div>
