@@ -211,6 +211,11 @@ export class DischargeChecklistStack extends cdk.Stack {
       actions: ["rekognition:DetectText"],
       resources: ["*"],
     }));
+
+    apiLambdaRole.addToPolicy(new iam.PolicyStatement({
+      actions: ["textract:DetectDocumentText"],
+      resources: ["*"],
+    }));
     apiLambdaRole.addToPolicy(new iam.PolicyStatement({
       actions: ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
       resources: ["*"],
